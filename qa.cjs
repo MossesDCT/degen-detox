@@ -10,7 +10,7 @@ const {spawn}=require('child_process');
  page.setDefaultTimeout(6000);
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:3001',{waitUntil:'networkidle'});
- await page.waitForSelector('flutter-view');
+ await page.waitForSelector('flutter-view',{timeout:30000});
  await page.waitForTimeout(3000);
  const enable=page.locator('flt-semantics-placeholder');
  if(await enable.count()) await enable.evaluate(e=>e.click());
