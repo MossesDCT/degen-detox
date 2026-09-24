@@ -23,6 +23,20 @@ void main() {
       expect(find.text(tr('privacy', locale)), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+    testWidgets('lifetime paywall fits phone in $locale', (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      SharedPreferences.setMockInitialValues({'degen_language': locale});
+      await tester.pumpWidget(const DegenApp());
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(tr('configure', locale)));
+      await tester.pumpAndSettle();
+      expect(find.text(tr('noSubscription', locale)), findsOneWidget);
+      expect(find.text('500 SKR'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   }
   testWidgets('free user sees a clearly non-transactional paywall',
       (tester) async {
@@ -31,7 +45,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Set up your morning'));
     await tester.pumpAndSettle();
-    expect(find.text(tr('paymentsPending', 'en')), findsOneWidget);
+    expect(find.text(tr('noSubscription', 'en')), findsOneWidget);
     expect(find.text('Explore Pro preview'), findsNWidgets(2));
     expect(tester.takeException(), isNull);
   });

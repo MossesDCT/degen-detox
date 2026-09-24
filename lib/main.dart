@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'degen/app.dart';
+import 'degen/payments.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  if (qaBuild && const String.fromEnvironment('FLUTTER_APP_FLAVOR') != 'qa') {
+    throw StateError('QA access may only run in the separate QA package.');
+  }
   runApp(const DegenApp());
 }
 

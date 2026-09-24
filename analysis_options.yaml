@@ -15,6 +15,7 @@ linter:
 
 analyzer:
   exclude:
+    - legacy/**
     - lib/generated/**
     - lib/l10n/generated/**
     - "**/*.g.dart"

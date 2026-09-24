@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
@@ -46,21 +45,9 @@ class AppBlockerNativeService {
   Future<Map<String, bool>> checkPermissions() async {
     final result = await _channel.invokeMethod('checkPermissions');
     return {
-      'hasUsageStatsPermission': result['hasUsageStatsPermission'] as bool,
-      'hasOverlayPermission': result['hasOverlayPermission'] as bool,
       'hasAccessibilityPermission':
           result['hasAccessibilityPermission'] as bool,
     };
-  }
-
-  /// Opens system settings for Usage Stats permission.
-  Future<void> requestUsageStatsPermission() async {
-    await _channel.invokeMethod('requestUsageStatsPermission');
-  }
-
-  /// Opens system settings for Overlay permission.
-  Future<void> requestOverlayPermission() async {
-    await _channel.invokeMethod('requestOverlayPermission');
   }
 
   /// Opens Accessibility Settings so the user can enable the blocker service.
@@ -90,7 +77,7 @@ class AppBlockerNativeService {
     return result as bool;
   }
 
-  /// Schedules daily blocking at wake time. NEVER blocks immediately.
+  /// Schedules daily blocking; activates immediately inside the chosen window.
   Future<void> scheduleBlocking({
     required List<String> blockedPackages,
     required int wakeHour,

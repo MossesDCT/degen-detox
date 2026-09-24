@@ -84,7 +84,7 @@ class BlockerAccessibilityService : AccessibilityService() {
         @Volatile
         var blockEndTimeMs: Long = 0L
 
-        private const val PREFS_KEY_LANGUAGE = "language_code"
+        private const val PREFS_KEY_LANGUAGE = "degen_language"
 
         /** Live reference to the running instance (null if service not connected). */
         @Volatile
@@ -138,10 +138,12 @@ class BlockerAccessibilityService : AccessibilityService() {
         val langCode = prefs.getString("flutter.$PREFS_KEY_LANGUAGE", "en") ?: "en"
         overlayStr = accessibilityOverlayTranslations[langCode]
             ?: accessibilityOverlayTranslations["en"]!!
+        BlockSchedule.refresh(this)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
+        BlockSchedule.refresh(this, false)
 
         // If blocking was deactivated externally, clean up and return
         if (!isBlockingActive) {
@@ -158,7 +160,7 @@ class BlockerAccessibilityService : AccessibilityService() {
 
         val pkg = event.packageName?.toString() ?: return
 
-        if (blockedPackages.contains(pkg)) {
+        if (blockedPackages.contains(pkg) && BlockSafety.allowed(this, pkg)) {
             // Blocked app detected — kick to home, then briefly show overlay
             performGlobalAction(GLOBAL_ACTION_HOME)
             if (overlayView == null) {
@@ -264,7 +266,7 @@ class BlockerAccessibilityService : AccessibilityService() {
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             overlayHeight,
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
             // FLAG_NOT_FOCUSABLE ensures home/back gestures always work
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or

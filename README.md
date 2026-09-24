@@ -1,55 +1,65 @@
 # Degen Detox
 
-Flutter Android wellbeing app for the crypto community. Version 0.1.0 is an implementation milestone and interactive design preview, not a production release.
+Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.2 adds Mobile Wallet Adapter checkout, on-chain receipt verification, persistent native reminders and morning blocking integration.
 
-## Run
+This is a device-test release candidate. Automated tests and compilation do not establish that Seeker wallet interaction, background alarms and Accessibility behave correctly on the user's specific device.
 
-Tested with Flutter 3.41.4 / Dart 3.11.1.
+## Lifetime price
+
+- 0.1 SOL: lifetime Pro, morning blocking, 20 recipes and Trading Wind-down.
+- 500 SKR: the same lifetime Pro plus Touch Grass.
+- No subscriptions or monthly app payments. Solana fees are separate.
+- Payment recipient: `4pJkHCrfZKWJS6Jb5LyWCUAYhuxx9abKA9WniysS938e`.
+- Mainnet SKR mint: `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`, six decimals, standard SPL Token program. Official mint reference: [Solana Mobile](https://solanamobile.com/skr).
+
+## Build and test
 
 ```sh
 flutter pub get
+flutter analyze lib test
 flutter test
-flutter analyze lib/degen lib/main.dart test
-flutter run
+# No real payments; all features available, separate application ID:
+flutter build apk --release --flavor qa --dart-define=DEGEN_QA=true --target-platform android-arm64
+# Real mainnet wallet checkout; no QA access:
+flutter build apk --release --flavor production --target-platform android-arm64
+# Browser UI only; checkout disabled:
 flutter build web --release
 ```
 
-An Android SDK is required for `flutter build apk`. A signed Android build and physical-device tests have not yet been completed.
+The QA package is `com.degendetox.app.qa`, the payment candidate is `com.degendetox.app`. QA flags are rejected by the normal entry point when paired with a non-QA flavor. Test APKs use Android debug signing even though they contain release-optimized code. Configure an owner-controlled release key before store distribution.
 
-## Implementation
+## Payment implementation
 
-- New entry point: `lib/main.dart`. The old Cortisol Zero navigation and Play Billing initialization are not launched.
-- New application: `lib/degen/`. Green Manrope-based interface, dark/light themes, phone and desktop layouts.
-- Six interface languages: English, Lithuanian, Spanish, French, German, Korean.
-- Free: breathing sessions, localized evidence-linked education, local Impulse Check.
-- Pro preview: wake time, 1–4 hour morning schedule, app chooser, 20 localized recipes, Trading Wind-down.
-- SKR Pro preview: 1–8 hour Touch Grass interval and animated grass experience.
-- Original Android blocking services retained under `com.degendetox.app`, awaiting integration, safety audit and real-device validation.
-- Notification adapter prepares a seven-day schedule. Notification permission, cold launch, replenishment, reboot and battery behavior require end-to-end integration/testing.
+The user explicitly reviews price, network fees, recipient, and token mint before opening their wallet. Wallet authorization and transaction signing use [Mobile Wallet Adapter](https://docs.solanamobile.com/get-started/flutter/overview). The app does not generate or hold a user's private key.
 
-## Payment and access safety
+SOL uses a System Program transfer. SKR uses `transferChecked` and, if necessary, an idempotent associated-token-account creation. The purchaser may fund the recipient account's rent; the UI explicitly discloses this in addition to the network fee. Only the payer's associated SKR account is supported by this initial checkout.
 
-No wallet connection or SOL/SKR transaction is implemented in this build. No payment is requested or simulated as successful. The explicitly labeled preview tier is temporary and does not create a paid entitlement.
+Every transaction carries a `DD1|lifetime|TOKEN|WALLET|NONCE` memo. Returned signed bytes must match the exact compiled transaction, and the payer signature is cryptographically verified before broadcast. Pending signature and last-valid block height are persisted before broadcasting. No automatic second payment is attempted.
 
-`AccessPolicy.pro` and `.grass` use only verified access. Preview unlocks UI through `.showPro` and `.showGrass`. Native blocking and notification scheduling fail closed because no verified receipt is available.
+The app checks the RPC's mainnet genesis hash, finalized status, successful execution, exact recipient, payer signer, exact amount, exact token mint/program/decimals, memo, and credited/debited balances. A SOL receipt cannot unlock SKR benefits.
 
-Production integration requires wallet signing, an independently verified receipt, exact network and token mint validation, recipient and amount checks, duplicate-proof attribution, confirmation/finality handling, restore access and SKR-specific entitlements. A token symbol is not an identity check.
+Receipt and pending-payment data are stored using Android-backed secure storage; valid cached Pro access does not expire when offline. Fresh installation/restoration requires a wallet-signed, nonce-bound proof of ownership. Restoration first checks supplied/pending/cached receipts, then up to 1,000 recent wallet signatures; older purchases can be restored by pasting their transaction signature. Keep your receipt and access to the paying wallet.
 
-## Content and privacy
+There is no deployed centralized licensing server. Verification trusts the configured HTTPS Solana RPC response, followed by strict local validation. This does not prevent a rooted device or a modified binary from bypassing local feature gates. A dedicated production RPC endpoint and independent payment-security review are recommended before public rollout. Public RPC can rate-limit clients; no API secret is embedded.
 
-New visible educational material links to supporting sources. Legacy recipe health-benefit and cortisol-percentage claims are not shown; recipes retain titles, ingredients and instructions only. No measured hormone reductions are promised.
+## Android features
 
-Native preferences and optional Impulse Check notes use local SharedPreferences, not encrypted secure storage. Browser preview state is session-only. No analytics is initialized in the new entry point. Legacy dependencies and permissions remain to be minimized and audited before release.
+- Accessibility observes window-change package names, not screen content. The overlay uses `TYPE_ACCESSIBILITY_OVERLAY`; the main UI requests Accessibility explicitly.
+- Native schedules handle midnight, local calendar days, reboot, package update and clock/timezone changes.
+- System apps, launchers, the app itself and recognized wallets are excluded from the block list. Emergency stop is available in Morning Shield and Settings.
+- Recurring Grass notifications use a native receiver that schedules the next interval even without Flutter running. Android can delay inexact alarms; force-stop suppresses app background work until relaunch. Tapping the notification opens the animation; no automatic full-screen takeover.
+- Six languages, dark/light appearance, free breathing, education and Impulse Check.
 
-Files `PRIVACY_POLICY.md` and `TERMS_OF_SERVICE.md` are inherited historical documents, NOT approved Degen Detox legal policies. They must be replaced before publication. Release signing still needs a production key; never publish debug-signed builds.
+## Before public release
 
-## Provenance and eligibility
+Complete `TESTING.md` on a physical Solana Seeker. In particular verify wallet cancellation, successful SOL and SKR checkout with separate payer wallets, pending-payment recovery, reinstall/restore, permission denial, overnight blocking and background reminders. No real wallet transaction was made by the build agent. The automated suite currently contains 30 passing tests; static analysis of active code reports no issues.
 
-See `PROVENANCE.md`. Reusing Cortisol Zero must be disclosed; this repository is not evidence that all underlying code is new. Hackathon eligibility is unresolved until the organizers confirm in writing.
+Production signing, native-speaker translation review, legal/contact details and hackathon eligibility confirmation remain release requirements. See `PROVENANCE.md`; this is a disclosed derivative, not a claim that all code was newly authored for a hackathon.
 
-## Assets
+## Project layout and privacy
 
-- Grass image: generated specifically for Degen Detox.
-- Degen mark: original vector artwork.
-- Manrope: bundled with `assets/fonts/Manrope-OFL.txt`.
-- Legacy Nunito and source assets: inherited from the supplied Cortisol Zero project; retain and review licensing before distribution.
+`lib/degen/` is the active app. Unused Cortisol Zero screens were moved into `legacy/lib/`, excluded from the analyzer, and their unused plugins were removed from the new build. Original source provenance is preserved.
+
+Notes and settings stay local in SharedPreferences (notes are not encrypted). Purchase data uses secure storage. RPC queries expose IP and queried public wallet/transaction data to the RPC provider. No analytics is initialized. Native Accessibility does not retrieve window contents.
+
+Grass artwork and Degen logo were created for this project. Manrope includes its OFL license. Review inherited asset licenses before distribution.

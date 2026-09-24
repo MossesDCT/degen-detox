@@ -22,7 +22,7 @@ const {spawn}=require('child_process');
  await page.screenshot({path:'/home/user/workspace/degen-mobile.png'});
  console.log('BUTTONS',await page.getByRole('button').allTextContents());
  await page.getByRole('button',{name:'Set up your morning',exact:true}).click();
- await page.getByText('Payments are not enabled in this build.',{exact:false}).waitFor();
+ await page.getByText('Lifetime Pro. No subscriptions. No monthly bills.',{exact:true}).waitFor();
  await page.screenshot({path:'/home/user/workspace/degen-pro.png'});
  await page.getByRole('button',{name:'Explore Pro preview',exact:true}).last().click();
  await page.getByRole('button',{name:'Set up your morning',exact:true}).click();

@@ -29,8 +29,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
-        // Android 12+ (API 31): remove the system splash screen as soon as possible
-        // so our Flutter video splash takes over immediately.
+        // Android 12+ (API 31): transition from the system launch screen to Flutter.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             splashScreen.setOnExitAnimationListener { splashScreenView ->
                 splashScreenView.remove()
@@ -41,6 +40,11 @@ class MainActivity : FlutterActivity() {
 
     private val channelName = "com.degendetox.app/app_blocker"
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
@@ -49,8 +53,6 @@ class MainActivity : FlutterActivity() {
                 when (call.method) {
                     "getInstalledApps" -> handleGetInstalledApps(result)
                     "checkPermissions" -> handleCheckPermissions(result)
-                    "requestUsageStatsPermission" -> handleRequestUsageStats(result)
-                    "requestOverlayPermission" -> handleRequestOverlay(result)
                     "requestAccessibilityPermission" -> handleRequestAccessibility(result)
                     "startBlocking" -> handleStartBlocking(call, result)
                     "stopBlocking" -> handleStopBlocking(result)
@@ -58,6 +60,29 @@ class MainActivity : FlutterActivity() {
                     "scheduleBlocking" -> handleScheduleBlocking(call, result)
                     "cancelSchedule" -> handleCancelSchedule(result)
                     "isScheduleActive" -> handleIsScheduleActive(result)
+                    "setGrass" -> {
+                        val h = call.argument<Int>("hours") ?: 0
+                        if (h !in 1..8) result.error("INVALID_HOURS", "1..8 required", null)
+                        else {
+                            GrassSchedule.schedule(this, h, call.argument<String>("title") ?: "Touch Grass",
+                                call.argument<String>("body") ?: "")
+                            result.success(true)
+                        }
+                    }
+                    "cancelGrass" -> { GrassSchedule.cancel(this); result.success(true) }
+                    "grassLaunch" -> {
+                        val open = intent.getBooleanExtra("open_grass", false)
+                        intent.removeExtra("open_grass")
+                        result.success(open)
+                    }
+                    "testGrass" -> {
+                        val i = Intent(this, GrassReminderReceiver::class.java).setAction("com.degendetox.app.GRASS_TEST")
+                        val pi = PendingIntent.getBroadcast(this, 9011, i,
+                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                        (getSystemService(Context.ALARM_SERVICE) as AlarmManager)
+                            .setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 10000, pi)
+                        result.success(true)
+                    }
                     else -> result.notImplemented()
                 }
             }
@@ -77,7 +102,7 @@ class MainActivity : FlutterActivity() {
 
             for (info in resolveInfos) {
                 val pkg = info.activityInfo.packageName
-                if (pkg == ownPackage) continue
+                if (pkg == ownPackage || !BlockSafety.allowed(this, pkg)) continue
 
                 val appInfo = try {
                     pm.getApplicationInfo(pkg, 0)
@@ -132,26 +157,12 @@ class MainActivity : FlutterActivity() {
     // ── Permission checks ──────────────────────────────────────────────────────
 
     private fun handleCheckPermissions(result: MethodChannel.Result) {
-        val hasUsageStats = hasUsageStatsPermission()
-        val hasOverlay = Settings.canDrawOverlays(this)
         val hasAccessibility = hasAccessibilityPermission()
         result.success(
             mapOf(
-                "hasUsageStatsPermission" to hasUsageStats,
-                "hasOverlayPermission" to hasOverlay,
                 "hasAccessibilityPermission" to hasAccessibility
             )
         )
-    }
-
-    private fun hasUsageStatsPermission(): Boolean {
-        val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = appOps.unsafeCheckOpNoThrow(
-            AppOpsManager.OPSTR_GET_USAGE_STATS,
-            Process.myUid(),
-            packageName
-        )
-        return mode == AppOpsManager.MODE_ALLOWED
     }
 
     /**
@@ -159,7 +170,7 @@ class MainActivity : FlutterActivity() {
      * Reads Settings.Secure for the enabled accessibility services string.
      */
     private fun hasAccessibilityPermission(): Boolean {
-        val expectedService = "$packageName/${BlockerAccessibilityService::class.java.name}"
+        val expectedService = android.content.ComponentName(this, BlockerAccessibilityService::class.java)
         val enabledServices = Settings.Secure.getString(
             contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
@@ -167,8 +178,8 @@ class MainActivity : FlutterActivity() {
         val colonSplitter = TextUtils.SimpleStringSplitter(':')
         colonSplitter.setString(enabledServices)
         while (colonSplitter.hasNext()) {
-            val component = colonSplitter.next()
-            if (component.equals(expectedService, ignoreCase = true)) {
+            val component = android.content.ComponentName.unflattenFromString(colonSplitter.next())
+            if (component == expectedService) {
                 return true
             }
         }
@@ -176,31 +187,6 @@ class MainActivity : FlutterActivity() {
     }
 
     // ── Permission requests ────────────────────────────────────────────────────
-
-    private fun handleRequestUsageStats(result: MethodChannel.Result) {
-        try {
-            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            result.success(true)
-        } catch (e: Exception) {
-            result.error("USAGE_STATS_ERROR", e.message, null)
-        }
-    }
-
-    private fun handleRequestOverlay(result: MethodChannel.Result) {
-        try {
-            val intent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:$packageName")
-            )
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            result.success(true)
-        } catch (e: Exception) {
-            result.error("OVERLAY_ERROR", e.message, null)
-        }
-    }
 
     private fun handleRequestAccessibility(result: MethodChannel.Result) {
         try {
@@ -216,43 +202,31 @@ class MainActivity : FlutterActivity() {
     // ── Blocking control ───────────────────────────────────────────────────────
 
     /**
-     * Starts blocking via BlockerAccessibilityService (if running) with fallback
-     * to the legacy AppBlockerService foreground service.
+     * Starts a bounded session through the user-enabled Accessibility service.
      */
     private fun handleStartBlocking(call: MethodCall, result: MethodChannel.Result) {
         try {
-            val blockedPackages = call.argument<List<String>>("blockedPackages")
+            val blockedPackages = call.argument<List<String>>("blockedPackages")?.filter { BlockSafety.allowed(this, it) }
             val durationMinutes = call.argument<Int>("durationMinutes")
 
             if (blockedPackages == null || durationMinutes == null) {
                 result.error("INVALID_ARGS", "blockedPackages and durationMinutes required", null)
                 return
             }
-
-            if (BlockerAccessibilityService.isRunning) {
-                // Primary path: use the AccessibilityService
-                BlockerAccessibilityService.blockedPackages = blockedPackages
-                BlockerAccessibilityService.blockEndTimeMs =
-                    System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(durationMinutes.toLong())
-                BlockerAccessibilityService.isBlockingActive = true
-                // The instance starts its own end-timer
-                // (accessed via the static stopFromOutside / startEndTimer pattern)
-            } else {
-                // Fallback: legacy UsageStats foreground service
-                val intent = Intent(this, AppBlockerService::class.java).apply {
-                    action = AppBlockerService.ACTION_START
-                    putStringArrayListExtra(
-                        AppBlockerService.EXTRA_BLOCKED_PACKAGES,
-                        ArrayList(blockedPackages)
-                    )
-                    putExtra(AppBlockerService.EXTRA_DURATION_MINUTES, durationMinutes)
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(intent)
-                } else {
-                    startService(intent)
-                }
+            if (durationMinutes !in 1..240 || blockedPackages.isEmpty()) {
+                result.error("INVALID_ARGS", "Invalid duration or apps", null); return
             }
+            getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE).edit()
+                .putBoolean("flutter.blocker_schedule_active", false).apply()
+            cancelAlarm(this)
+
+            if (!BlockerAccessibilityService.isRunning) {
+                result.error("ACCESSIBILITY_REQUIRED", "Enable Accessibility first", null); return
+            }
+            BlockerAccessibilityService.blockedPackages = blockedPackages
+            BlockerAccessibilityService.blockEndTimeMs =
+                System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(durationMinutes.toLong())
+            BlockerAccessibilityService.isBlockingActive = true
 
             result.success(true)
         } catch (e: Exception) {
@@ -267,14 +241,6 @@ class MainActivity : FlutterActivity() {
                 BlockerAccessibilityService.stopFromOutside()
             }
 
-            // Also stop legacy service if it happens to be running
-            if (AppBlockerService.isRunning) {
-                val intent = Intent(this, AppBlockerService::class.java).apply {
-                    action = AppBlockerService.ACTION_STOP
-                }
-                startService(intent)
-            }
-
             result.success(true)
         } catch (e: Exception) {
             result.error("STOP_ERROR", e.message, null)
@@ -282,19 +248,19 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun handleIsBlockingActive(result: MethodChannel.Result) {
-        val active = BlockerAccessibilityService.isBlockingActive || AppBlockerService.isRunning
+        val active = BlockerAccessibilityService.isBlockingActive
         result.success(active)
     }
 
     // ── Schedule-based blocking ────────────────────────────────────────────
 
     /**
-     * Schedules daily blocking. NEVER blocks immediately.
+     * Schedules daily blocking, starting immediately if already inside the window.
      * Blocking starts at wakeHour:wakeMinute and lasts durationHours.
      */
     private fun handleScheduleBlocking(call: MethodCall, result: MethodChannel.Result) {
         try {
-            val blockedPackages = call.argument<List<String>>("blockedPackages")
+            val blockedPackages = call.argument<List<String>>("blockedPackages")?.filter { BlockSafety.allowed(this, it) }
             val wakeHour = call.argument<Int>("wakeHour")
             val wakeMinute = call.argument<Int>("wakeMinute")
             val durationHours = call.argument<Int>("durationHours")
@@ -303,6 +269,10 @@ class MainActivity : FlutterActivity() {
                 wakeMinute == null || durationHours == null) {
                 result.error("INVALID_ARGS", "All args required", null)
                 return
+            }
+            if (blockedPackages.isEmpty() || wakeHour !in 0..23 ||
+                wakeMinute !in 0..59 || durationHours !in 1..4) {
+                result.error("INVALID_ARGS", "Invalid morning plan", null); return
             }
 
             // Save schedule to SharedPreferences
@@ -315,36 +285,7 @@ class MainActivity : FlutterActivity() {
                 .putBoolean("flutter.blocker_schedule_active", true)
                 .apply()
 
-            val now = System.currentTimeMillis()
-            val todayWake = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, wakeHour)
-                set(Calendar.MINUTE, wakeMinute)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.timeInMillis
-            val todayWakeEnd = todayWake + durationHours * 3600_000L
-
-            android.util.Log.d("BlockerMain", "scheduleBlocking: now=$now todayWake=$todayWake todayWakeEnd=$todayWakeEnd packages=$blockedPackages")
-
-            // Check if we are currently INSIDE today's blocking window
-            if (now in todayWake..todayWakeEnd) {
-                // We're in the window right now — activate blocking immediately
-                android.util.Log.d("BlockerMain", "Currently IN blocking window — activating NOW")
-                if (BlockerAccessibilityService.isRunning) {
-                    BlockerAccessibilityService.blockedPackages = blockedPackages
-                    BlockerAccessibilityService.blockEndTimeMs = todayWakeEnd
-                    BlockerAccessibilityService.isBlockingActive = true
-                }
-                // Also schedule tomorrow
-                val tomorrowWake = todayWake + 24 * 3600_000L
-                scheduleAlarm(this, tomorrowWake)
-                android.util.Log.d("BlockerMain", "Also scheduled tomorrow at $tomorrowWake")
-            } else {
-                // Outside window — schedule next wake time
-                val nextWake = if (now < todayWake) todayWake else todayWake + 24 * 3600_000L
-                scheduleAlarm(this, nextWake)
-                android.util.Log.d("BlockerMain", "Outside window — alarm set for $nextWake")
-            }
+            BlockSchedule.refresh(this)
 
             result.success(true)
         } catch (e: Exception) {
@@ -362,12 +303,6 @@ class MainActivity : FlutterActivity() {
             if (BlockerAccessibilityService.isBlockingActive) {
                 BlockerAccessibilityService.stopFromOutside()
             }
-            if (AppBlockerService.isRunning) {
-                val intent = Intent(this, AppBlockerService::class.java)
-                intent.action = AppBlockerService.ACTION_STOP
-                startService(intent)
-            }
-
             result.success(true)
         } catch (e: Exception) {
             result.error("CANCEL_ERROR", e.message, null)

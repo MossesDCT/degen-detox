@@ -14,6 +14,8 @@ import '../l10n/generated/app_localizations.dart';
 import 'domain.dart';
 import 'reminders.dart';
 import 'strings.dart';
+import 'payments.dart';
+import 'purchase_panel.dart';
 
 const pine = Color(0xff0b1712),
     leaf = Color(0xffc4eb87),
@@ -135,8 +137,11 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   bool grassEnabled = false;
   final native = AppBlockerNativeService();
   final reminders = GrassReminders();
-  // Fail-closed. A verified entitlement service will replace this constant.
-  AccessPolicy get access => AccessPolicy(preview: previewTier);
+  final payments = PaymentService();
+  AccessPolicy get access => AccessPolicy(
+      verified:
+          qaBuild ? AccessTier.skr : payments.receipt?.tier ?? AccessTier.free,
+      preview: previewTier);
   String t(String key) => tr(key, widget.locale);
   Color get accent => Theme.of(context).colorScheme.primary;
   Color get subtle => widget.light ? const Color(0xff5c6b61) : muted;
@@ -164,7 +169,31 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
         });
       }
     } catch (_) {/* Invalid saved data never blocks the app. */}
-    // No paid background side effects without a server-verified entitlement.
+    await payments.load();
+    if (!mounted) return;
+    setState(() {});
+    if (access.grass) {
+      await reminders.init(openGrassScene);
+      final storedInterval = p.getInt('degen_grass_hours');
+      if (storedInterval != null) {
+        interval = storedInterval.clamp(1, 8);
+        grassEnabled = true;
+      }
+      if (mounted) setState(() {});
+    }
+  }
+
+  void openGrassScene() {
+    if (!mounted || !access.grass) return;
+    Navigator.push(context,
+        MaterialPageRoute(builder: (_) => GrassScene(locale: widget.locale)));
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && access.grass && !kIsWeb) {
+      reminders.checkLaunch(openGrassScene);
+    }
   }
 
   @override
@@ -324,7 +353,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                     const Spacer(),
                     label('SOLANA MOBILE'),
                     const SizedBox(height: 10),
-                    Text('Degen Detox · v0.1',
+                    Text('Degen Detox · v0.2',
                         style: TextStyle(color: subtle, fontSize: 12)),
                   ])),
         Expanded(
@@ -359,6 +388,10 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                     icon: Icon(Icons.account_balance_wallet_outlined,
                         size: 21, color: accent)),
               ])),
+          if (qaBuild)
+            Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: tag(t('qaBanner'))),
           if (previewTier != AccessTier.free && !wide)
             Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -622,7 +655,8 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               style:
                   const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
           const SizedBox(height: 12),
-          Text(t('privacyBody'), style: TextStyle(color: subtle, height: 1.7)),
+          Text(t(kIsWeb ? 'privacyBody' : 'privacyNative'),
+              style: TextStyle(color: subtle, height: 1.7)),
           const SizedBox(height: 16),
           OutlinedButton(onPressed: deleteEntries, child: Text(t('delete'))),
         ])),
@@ -632,7 +666,13 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.1 · ${t('previewMode')}', style: TextStyle(color: subtle)),
+        Text('v0.2 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+            style: TextStyle(color: subtle)),
+        const SizedBox(height: 16),
+        OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),
+        if (!kIsWeb)
+          TextButton(
+              onPressed: native.cancelSchedule, child: Text(t('stopBlocking'))),
       ]);
   Future<void> deleteEntries() async {
     final ok = await showDialog<bool>(
@@ -657,50 +697,16 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   Future<void> upgrade() async {
     await sheet(
         t('proTitle'),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(t('paymentsPending'),
-              style: TextStyle(color: subtle, height: 1.7)),
-          const SizedBox(height: 24),
-          box(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(t('paySol'),
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 12),
-            Text('${t('morning')}\n${t('recipes')} · 20\n${t('wind')}',
-                style: TextStyle(height: 1.9, color: subtle)),
-            const SizedBox(height: 16),
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() => previewTier = AccessTier.sol);
-                },
-                child: Text(t('demo'))),
-          ])),
-          const SizedBox(height: 16),
-          box(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Expanded(
-                  child: Text(t('paySkr'),
-                      style: const TextStyle(
-                          fontSize: 22, fontWeight: FontWeight.w700))),
-              tag('SKR')
-            ]),
-            const SizedBox(height: 12),
-            Text(
-                '${t('morning')}\n${t('recipes')} · 20\n${t('wind')}\n+ Touch Grass',
-                style: TextStyle(height: 1.9, color: subtle)),
-            const SizedBox(height: 16),
-            FilledButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() => previewTier = AccessTier.skr);
-                },
-                child: Text(t('demo'))),
-          ])),
-          const SizedBox(height: 18),
-          Text(t('demoNote'),
-              style: TextStyle(color: subtle, fontSize: 12, height: 1.7)),
-        ]));
+        PurchasePanel(
+            service: payments,
+            locale: widget.locale,
+            onChanged: () {
+              if (mounted) setState(() {});
+            },
+            onPreview: (tier) {
+              Navigator.pop(context);
+              setState(() => previewTier = tier);
+            }));
   }
 
   Future<void> morning() async {
@@ -714,7 +720,10 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
         StatefulBuilder(
             builder: (c, refresh) =>
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(t('androidOnly'),
+                  Text(
+                      t(access.pro && !kIsWeb
+                          ? 'permissionsBody'
+                          : 'androidOnly'),
                       style:
                           TextStyle(color: subtle, fontSize: 13, height: 1.7)),
                   const SizedBox(height: 24),
@@ -745,6 +754,13 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                           })
                   ]),
                   const SizedBox(height: 24),
+                  if (access.pro && !kIsWeb) ...[
+                    OutlinedButton.icon(
+                        onPressed: permissions,
+                        icon: const Icon(Icons.accessibility_new),
+                        label: Text(t('permissions'))),
+                    const SizedBox(height: 12),
+                  ],
                   OutlinedButton.icon(
                       onPressed: () async {
                         await chooseApps();
@@ -758,26 +774,65 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         await persist();
                         // Preview settings cannot call into the blocking engine.
                         if (access.pro && !kIsWeb) {
-                          final p = await native.checkPermissions();
-                          if (!p.values.every((v) => v) || selected.isEmpty) {
-                            refresh(() => status = t('androidOnly'));
-                            return;
+                          try {
+                            final p = await native.checkPermissions();
+                            if (p['hasAccessibilityPermission'] != true ||
+                                selected.isEmpty) {
+                              refresh(() => status = t('needPermission'));
+                              return;
+                            }
+                            await native.scheduleBlocking(
+                                blockedPackages: selected.toList(),
+                                wakeHour: wake.hour,
+                                wakeMinute: wake.minute,
+                                durationHours: hours);
+                            refresh(() => status = t('blockSaved'));
+                          } catch (_) {
+                            refresh(() => status = t('needPermission'));
                           }
-                          await native.scheduleBlocking(
-                              blockedPackages: selected.toList(),
-                              wakeHour: wake.hour,
-                              wakeMinute: wake.minute,
-                              durationHours: hours);
+                          return;
                         }
                         refresh(() => status = t('saved'));
                       },
                       child: Text(t('save'))),
+                  if (access.pro && !kIsWeb)
+                    TextButton(
+                        onPressed: () async {
+                          await native.cancelSchedule();
+                          if (c.mounted) refresh(() => status = t('disable'));
+                        },
+                        child: Text(t('stopBlocking'))),
+                  if (qaBuild && !kIsWeb)
+                    OutlinedButton(
+                        onPressed: () async {
+                          final p = await native.checkPermissions();
+                          if (p['hasAccessibilityPermission'] != true ||
+                              selected.isEmpty) {
+                            refresh(() => status = t('needPermission'));
+                            return;
+                          }
+                          await native.startBlocking(
+                              blockedPackages: selected.toList(),
+                              durationMinutes: 2);
+                          if (c.mounted) refresh(() => status = t('saved'));
+                        },
+                        child: Text(t('testBlock'))),
                   if (status != null)
                     Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: Text(status!, style: TextStyle(color: accent))),
                 ])));
   }
+
+  Future<void> permissions() => sheet(
+      t('permissions'),
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(t('permissionsBody'), style: const TextStyle(height: 1.7)),
+        const SizedBox(height: 24),
+        FilledButton(
+            onPressed: native.requestAccessibilityPermission,
+            child: Text(t('accessibility'))),
+      ]));
 
   Future<void> chooseApps() async {
     if (!kIsWeb) {
@@ -1020,14 +1075,21 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                             }
                           : null,
                       child: Text(t(grassEnabled ? 'disable' : 'enable'))),
+                  if (access.grass && !kIsWeb)
+                    TextButton(
+                        onPressed: reminders.test,
+                        child: Text(t('testReminder'))),
+                  if (grassEnabled)
+                    Text(t('remindersOn'), style: TextStyle(color: accent)),
                   const SizedBox(height: 16),
                   Text(t('reminderNote'),
                       style:
                           TextStyle(color: subtle, fontSize: 12, height: 1.7)),
                   const SizedBox(height: 12),
-                  Text(t('demoNote'),
-                      style:
-                          TextStyle(color: subtle, fontSize: 12, height: 1.7)),
+                  if (!access.grass)
+                    Text(t('demoNote'),
+                        style: TextStyle(
+                            color: subtle, fontSize: 12, height: 1.7)),
                 ])));
   }
 

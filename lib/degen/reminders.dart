@@ -1,34 +1,23 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:timezone/data/latest_all.dart' as data;
-import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'domain.dart';
 
-/// A 7-day schedule. Replenishment after verified entitlement restoration is
-/// still to be integrated. It is deliberately not a
-/// full-screen intent: wellbeing reminders must not take over another app.
+/// Native receiver reschedules the next reminder after every alarm, including
+/// when Flutter is not running. Android may delay inexact alarms in deep sleep.
 class GrassReminders {
-  final plugin = FlutterLocalNotificationsPlugin();
+  static const _channel = MethodChannel('com.degendetox.app/app_blocker');
   bool ready = false;
   Future<void> init(VoidCallback openGrass) async {
-    if (kIsWeb || ready) return;
-    data.initializeTimeZones();
-    tz.setLocalLocation(
-        tz.getLocation(await FlutterTimezone.getLocalTimezone()));
-    await plugin.initialize(
-        const InitializationSettings(
-          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-        ), onDidReceiveNotificationResponse: (r) {
-      if (r.payload == 'grass') openGrass();
-    });
-    final launch = await plugin.getNotificationAppLaunchDetails();
-    if (launch?.didNotificationLaunchApp == true &&
-        launch?.notificationResponse?.payload == 'grass') {
-      openGrass();
-    }
+    if (kIsWeb) return;
     ready = true;
+    await checkLaunch(openGrass);
+  }
+
+  Future<void> checkLaunch(VoidCallback openGrass) async {
+    if (kIsWeb) return;
+    if (await _channel.invokeMethod<bool>('grassLaunch') == true) openGrass();
   }
 
   Future<bool> schedule(
@@ -36,43 +25,22 @@ class GrassReminders {
     if (kIsWeb || !ready || !access.grass || hours < 1 || hours > 8) {
       return false;
     }
-    final android = plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-    if (await android?.requestNotificationsPermission() != true) return false;
-    await cancel();
-    final now = tz.TZDateTime.now(tz.local);
-    // Inexact alarms respect battery and OS scheduling; no precision guarantee.
-    for (var i = 1; i <= 168 ~/ hours; i++) {
-      await plugin.zonedSchedule(
-        9000 + i,
-        title,
-        body,
-        now.add(Duration(hours: i * hours)),
-        const NotificationDetails(
-            android: AndroidNotificationDetails(
-          'grass_break_v1',
-          'Touch Grass',
-          importance: Importance.high,
-          priority: Priority.high,
-          playSound: true,
-          enableVibration: true,
-        )),
-        payload: 'grass',
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-      );
-    }
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('degen_grass_hours', hours);
+    if (!await Permission.notification.request().isGranted) return false;
+    await _channel.invokeMethod(
+        'setGrass', {'hours': hours, 'title': title, 'body': body});
+    await (await SharedPreferences.getInstance())
+        .setInt('degen_grass_hours', hours);
     return true;
+  }
+
+  Future<void> test() async {
+    if (kIsWeb || !await Permission.notification.request().isGranted) return;
+    await _channel.invokeMethod('testGrass');
   }
 
   Future<void> cancel() async {
     if (kIsWeb) return;
-    for (var i = 1; i <= 168; i++) {
-      await plugin.cancel(9000 + i);
-    }
+    await _channel.invokeMethod('cancelGrass');
     await (await SharedPreferences.getInstance()).remove('degen_grass_hours');
   }
 }

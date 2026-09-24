@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="accessibility_service_description">Degen Detox uses this permission to detect when you open a blocked app during your morning focus time. This helps protect your mental wellbeing by gently redirecting you away from stressful apps.</string>
+    <string name="accessibility_service_description">Optional Morning Shield: detects the package name of an app you open during your chosen hours and returns blocked apps to Home. It cannot retrieve window content. No usage data is sent to a server. Disable this service at any time in Accessibility settings.</string>
 </resources>

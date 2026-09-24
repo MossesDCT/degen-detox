@@ -1,3 +1,5 @@
+import 'purchase_strings.dart';
+
 const languages = ['en', 'lt', 'es', 'fr', 'de', 'ko'];
 const languageNames = [
   'English',
@@ -10,7 +12,7 @@ const languageNames = [
 
 String tr(String key, String locale) {
   final index = languages.indexOf(locale);
-  final values = words[key];
+  final values = words[key] ?? purchaseWords[key];
   return values == null ? key : values[index < 0 ? 0 : index];
 }
 

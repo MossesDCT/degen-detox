@@ -28,3 +28,7 @@ This application is a derivative of the user's Cortisol Zero v61 project. Reuse 
 ## Hackathon disclosure
 
 Do not present inherited services or data as code created during the hackathon. Do not change old timestamps to imply eligibility. Obtain written confirmation about the three-month rule before submitting this derivative project, and preserve the baseline archive for review.
+
+## Version 0.2 additions
+
+Added Solana Mobile Wallet Adapter signing, exact-price mainnet SOL/SKR transactions, local on-chain receipt validation, wallet-proof restoration, secure receipt storage and a separate no-payment QA flavor. Reworked native scheduling for local calendar boundaries and reboot, added persistent Touch Grass reminders, and removed the active legacy UsageStats/overlay foreground-service path and old Play Billing dependencies. Unused Flutter screens and old policies are retained under `legacy/`, not active app navigation.

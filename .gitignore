@@ -3,6 +3,7 @@ build/
 .flutter-plugins*
 android/local.properties
 android/.gradle/
+android/.kotlin/
 android/key.properties
 *.jks
 *.keystore
