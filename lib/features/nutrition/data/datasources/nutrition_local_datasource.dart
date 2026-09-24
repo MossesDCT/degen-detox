@@ -1,0 +1,225 @@
+import 'dart:ui';
+
+import '../../../../l10n/generated/app_localizations.dart';
+import '../models/food_item_model.dart';
+import '../../domain/entities/food_item.dart';
+
+/// Local data source with comprehensive anti-stress food data.
+/// Each food includes cortisol-lowering mechanism and practical serving ideas.
+/// Content is localized based on the provided AppLocalizations instance.
+class NutritionLocalDatasource {
+  List<FoodItemModel> getFoods([AppLocalizations? l10n]) {
+    final l = l10n ?? lookupAppLocalizations(const Locale('en'));
+    return _buildFoods(l);
+  }
+
+  List<FoodItemModel> getFoodsByCategory(FoodCategory category,
+      [AppLocalizations? l10n]) {
+    return getFoods(l10n).where((f) => f.category == category).toList();
+  }
+
+  List<FoodItemModel> _buildFoods(AppLocalizations l) {
+    return [
+      FoodItemModel(
+        id: 'food_001',
+        name: l.foodName000,
+        category: FoodCategory.fruits,
+        emoji: '🫐',
+        keyBenefit: l.foodBenefit000,
+        mechanism: l.foodMechanism000,
+        servingIdea: l.foodServing000,
+        nutrients: l.foodNutrients000.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_002',
+        name: l.foodName001,
+        category: FoodCategory.fruits,
+        emoji: '🍌',
+        keyBenefit: l.foodBenefit001,
+        mechanism: l.foodMechanism001,
+        servingIdea: l.foodServing001,
+        nutrients: l.foodNutrients001.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_003',
+        name: l.foodName002,
+        category: FoodCategory.fruits,
+        emoji: '🍊',
+        keyBenefit: l.foodBenefit002,
+        mechanism: l.foodMechanism002,
+        servingIdea: l.foodServing002,
+        nutrients: l.foodNutrients002.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_004',
+        name: l.foodName003,
+        category: FoodCategory.fruits,
+        emoji: '🥑',
+        keyBenefit: l.foodBenefit003,
+        mechanism: l.foodMechanism003,
+        servingIdea: l.foodServing003,
+        nutrients: l.foodNutrients003.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_005',
+        name: l.foodName004,
+        category: FoodCategory.vegetables,
+        emoji: '🥬',
+        keyBenefit: l.foodBenefit004,
+        mechanism: l.foodMechanism004,
+        servingIdea: l.foodServing004,
+        nutrients: l.foodNutrients004.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_006',
+        name: l.foodName005,
+        category: FoodCategory.vegetables,
+        emoji: '🍠',
+        keyBenefit: l.foodBenefit005,
+        mechanism: l.foodMechanism005,
+        servingIdea: l.foodServing005,
+        nutrients: l.foodNutrients005.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_007',
+        name: l.foodName006,
+        category: FoodCategory.vegetables,
+        emoji: '🥦',
+        keyBenefit: l.foodBenefit006,
+        mechanism: l.foodMechanism006,
+        servingIdea: l.foodServing006,
+        nutrients: l.foodNutrients006.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_008',
+        name: l.foodName007,
+        category: FoodCategory.proteins,
+        emoji: '🐟',
+        keyBenefit: l.foodBenefit007,
+        mechanism: l.foodMechanism007,
+        servingIdea: l.foodServing007,
+        nutrients: l.foodNutrients007.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_009',
+        name: l.foodName008,
+        category: FoodCategory.proteins,
+        emoji: '🦃',
+        keyBenefit: l.foodBenefit008,
+        mechanism: l.foodMechanism008,
+        servingIdea: l.foodServing008,
+        nutrients: l.foodNutrients008.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_010',
+        name: l.foodName009,
+        category: FoodCategory.proteins,
+        emoji: '🥚',
+        keyBenefit: l.foodBenefit009,
+        mechanism: l.foodMechanism009,
+        servingIdea: l.foodServing009,
+        nutrients: l.foodNutrients009.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_011',
+        name: l.foodName010,
+        category: FoodCategory.beverages,
+        emoji: '🍵',
+        keyBenefit: l.foodBenefit010,
+        mechanism: l.foodMechanism010,
+        servingIdea: l.foodServing010,
+        nutrients: l.foodNutrients010.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_012',
+        name: l.foodName011,
+        category: FoodCategory.beverages,
+        emoji: '🌼',
+        keyBenefit: l.foodBenefit011,
+        mechanism: l.foodMechanism011,
+        servingIdea: l.foodServing011,
+        nutrients: l.foodNutrients011.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_013',
+        name: l.foodName012,
+        category: FoodCategory.nutsAndSeeds,
+        emoji: '🌰',
+        keyBenefit: l.foodBenefit012,
+        mechanism: l.foodMechanism012,
+        servingIdea: l.foodServing012,
+        nutrients: l.foodNutrients012.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_014',
+        name: l.foodName013,
+        category: FoodCategory.nutsAndSeeds,
+        emoji: '🌱',
+        keyBenefit: l.foodBenefit013,
+        mechanism: l.foodMechanism013,
+        servingIdea: l.foodServing013,
+        nutrients: l.foodNutrients013.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_015',
+        name: l.foodName014,
+        category: FoodCategory.grains,
+        emoji: '🌾',
+        keyBenefit: l.foodBenefit014,
+        mechanism: l.foodMechanism014,
+        servingIdea: l.foodServing014,
+        nutrients: l.foodNutrients014.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_016',
+        name: l.foodName015,
+        category: FoodCategory.grains,
+        emoji: '🌿',
+        keyBenefit: l.foodBenefit015,
+        mechanism: l.foodMechanism015,
+        servingIdea: l.foodServing015,
+        nutrients: l.foodNutrients015.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_017',
+        name: l.foodName016,
+        category: FoodCategory.dairy,
+        emoji: '🥛',
+        keyBenefit: l.foodBenefit016,
+        mechanism: l.foodMechanism016,
+        servingIdea: l.foodServing016,
+        nutrients: l.foodNutrients016.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_018',
+        name: l.foodName017,
+        category: FoodCategory.dairy,
+        emoji: '🥛',
+        keyBenefit: l.foodBenefit017,
+        mechanism: l.foodMechanism017,
+        servingIdea: l.foodServing017,
+        nutrients: l.foodNutrients017.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_019',
+        name: l.foodName018,
+        category: FoodCategory.spices,
+        emoji: '🟡',
+        keyBenefit: l.foodBenefit018,
+        mechanism: l.foodMechanism018,
+        servingIdea: l.foodServing018,
+        nutrients: l.foodNutrients018.split(', '),
+      ),
+      FoodItemModel(
+        id: 'food_020',
+        name: l.foodName019,
+        category: FoodCategory.spices,
+        emoji: '🍫',
+        keyBenefit: l.foodBenefit019,
+        mechanism: l.foodMechanism019,
+        servingIdea: l.foodServing019,
+        nutrients: l.foodNutrients019.split(', '),
+      ),
+    ];
+  }
+}
