@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'luxury.dart';
+import 'education.dart';
+import 'permission_guide.dart';
 import '../features/pro/app_blocker/data/app_blocker_service.dart';
 import '../features/breathing/data/datasources/breathing_local_datasource.dart';
 import '../features/breathing/domain/entities/breathing_technique.dart';
@@ -127,6 +129,7 @@ class DetoxShell extends StatefulWidget {
 }
 
 class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
+  final scroll = ScrollController();
   int tab = 0, hours = 2, interval = 2;
   TimeOfDay wake = const TimeOfDay(hour: 8, minute: 0);
   AccessTier previewTier = AccessTier.free;
@@ -199,6 +202,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    scroll.dispose();
     super.dispose();
   }
 
@@ -232,7 +236,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         children: [
                       Row(children: [
                         Expanded(
-                            child: Text(title,
+                            child: GoldText(title,
                                 style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w700))),
@@ -251,12 +255,16 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
       decoration: BoxDecoration(
           color: (bright ? leaf : accent).withValues(alpha: .10),
           borderRadius: BorderRadius.circular(7)),
-      child: Text(text,
-          style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1,
-              color: bright ? leaf : accent)));
+      child: (text.contains('PRO') || text.contains('SKR'))
+          ? GoldText(text,
+              style: const TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1))
+          : Text(text,
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                  color: bright ? leaf : accent)));
   Widget label(String text) => Text(text.toUpperCase(),
       style: TextStyle(
           color: subtle,
@@ -264,17 +272,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
           fontWeight: FontWeight.w700,
           letterSpacing: 1.6));
   Widget box(Widget child, {EdgeInsets padding = const EdgeInsets.all(24)}) =>
-      Container(
-          padding: padding,
-          decoration: BoxDecoration(
-              color: panel,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: .07))),
-          child: child);
+      LuxuryPanel(padding: padding, child: child);
   Widget rowTile(IconData icon, String title, String desc, VoidCallback action,
           {String? badge}) =>
       InkWell(
@@ -289,9 +287,14 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                      Text(title,
-                          style: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w700)),
+                      if (badge == 'PRO' || badge == 'SKR')
+                        GoldText(title,
+                            style: const TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w700))
+                      else
+                        Text(title,
+                            style: const TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 5),
                       Text(desc,
                           style: TextStyle(
@@ -323,105 +326,118 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
       (Icons.menu_book_outlined, 'learn'),
       (Icons.tune, 'settings')
     ];
-    return Scaffold(
-      body: SafeArea(
-          child: Row(children: [
-        if (wide)
-          Container(
-              width: 236,
-              padding: const EdgeInsets.fromLTRB(24, 36, 20, 24),
-              decoration: BoxDecoration(
-                  border: Border(
-                      right: BorderSide(color: subtle.withValues(alpha: .12)))),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    brand(),
-                    const SizedBox(height: 52),
-                    for (var i = 0; i < 4; i++)
-                      Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: ListTile(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                              selected: tab == i,
-                              selectedTileColor: accent.withValues(alpha: .08),
-                              leading: Icon(destinations[i].$1,
-                                  color: tab == i ? accent : subtle),
-                              title: Text(t(destinations[i].$2)),
-                              onTap: () => setState(() => tab = i))),
-                    const Spacer(),
-                    label('SOLANA MOBILE'),
-                    const SizedBox(height: 10),
-                    Text('Degen Detox · v0.2',
-                        style: TextStyle(color: subtle, fontSize: 12)),
-                  ])),
-        Expanded(
-            child: Column(children: [
-          Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: wide ? 40 : 24, vertical: 18),
+    return ForestBackdrop(
+        scroll: scroll,
+        light: widget.light,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
               child: Row(children: [
-                Expanded(
-                    child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: wide
-                            ? label('DEGEN DETOX / ${t(destinations[tab].$2)}')
-                            : brand())),
-                if (previewTier != AccessTier.free && wide)
-                  Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: tag(t('previewMode'))),
-                IconButton(
-                    tooltip: t('appearance'),
-                    onPressed: () =>
-                        widget.onSettings(widget.locale, !widget.light),
-                    icon: Icon(
-                        widget.light
-                            ? Icons.dark_mode_outlined
-                            : Icons.light_mode_outlined,
-                        size: 20)),
-                IconButton(
-                    tooltip: t('proTitle'),
-                    onPressed: upgrade,
-                    icon: Icon(Icons.account_balance_wallet_outlined,
-                        size: 21, color: accent)),
-              ])),
-          if (qaBuild)
-            Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: tag(t('qaBanner'))),
-          if (previewTier != AccessTier.free && !wide)
-            Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: tag(t('previewMode'))),
-          Expanded(
-              child: SingleChildScrollView(
-                  key: ValueKey(tab),
-                  padding: EdgeInsets.fromLTRB(
-                      wide ? 40 : 24, 8, wide ? 40 : 24, 32),
-                  child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 1000),
-                          child: pages[tab])))),
-        ])),
-      ])),
-      bottomNavigationBar: wide
-          ? null
-          : NavigationBar(
-              selectedIndex: tab,
-              onDestinationSelected: (i) => setState(() => tab = i),
-              destinations: [
-                  for (final d in destinations)
-                    NavigationDestination(icon: Icon(d.$1), label: t(d.$2))
-                ]),
-    );
+            if (wide)
+              Container(
+                  width: 236,
+                  padding: const EdgeInsets.fromLTRB(24, 36, 20, 24),
+                  decoration: BoxDecoration(
+                      border: Border(
+                          right: BorderSide(
+                              color: subtle.withValues(alpha: .12)))),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        brand(),
+                        const SizedBox(height: 52),
+                        for (var i = 0; i < 4; i++)
+                          Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  selected: tab == i,
+                                  selectedTileColor:
+                                      accent.withValues(alpha: .08),
+                                  leading: Icon(destinations[i].$1,
+                                      color: tab == i ? accent : subtle),
+                                  title: Text(t(destinations[i].$2)),
+                                  onTap: () => setState(() => tab = i))),
+                        const Spacer(),
+                        label('SOLANA MOBILE'),
+                        const SizedBox(height: 10),
+                        Text('Degen Detox · v0.3',
+                            style: TextStyle(color: subtle, fontSize: 12)),
+                      ])),
+            Expanded(
+                child: Column(children: [
+              Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: wide ? 40 : 24, vertical: 18),
+                  child: Row(children: [
+                    Expanded(
+                        child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: wide
+                                ? label(
+                                    'DEGEN DETOX / ${t(destinations[tab].$2)}')
+                                : brand())),
+                    if (previewTier != AccessTier.free && wide)
+                      Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: tag(t('previewMode'))),
+                    IconButton(
+                        tooltip: t('appearance'),
+                        onPressed: () =>
+                            widget.onSettings(widget.locale, !widget.light),
+                        icon: Icon(
+                            widget.light
+                                ? Icons.dark_mode_outlined
+                                : Icons.light_mode_outlined,
+                            size: 20)),
+                    IconButton(
+                        tooltip: t('proTitle'),
+                        onPressed: upgrade,
+                        icon: Icon(Icons.account_balance_wallet_outlined,
+                            size: 21, color: goldFor(context))),
+                  ])),
+              if (qaBuild)
+                Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: tag(t('qaBanner'))),
+              if (previewTier != AccessTier.free && !wide)
+                Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: tag(t('previewMode'))),
+              Expanded(
+                  child: SingleChildScrollView(
+                      key: ValueKey(tab),
+                      controller: scroll,
+                      physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(
+                          wide ? 40 : 24, 8, wide ? 40 : 24, 32),
+                      child: Align(
+                          alignment: Alignment.topCenter,
+                          child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 1000),
+                              child: SoftEntrance(
+                                  key: ValueKey(tab), child: pages[tab]))))),
+            ])),
+          ])),
+          bottomNavigationBar: wide
+              ? null
+              : NavigationBar(
+                  selectedIndex: tab,
+                  onDestinationSelected: (i) => setState(() => tab = i),
+                  destinations: [
+                      for (final d in destinations)
+                        NavigationDestination(icon: Icon(d.$1), label: t(d.$2))
+                    ]),
+        ));
   }
 
   Widget brand() => Row(mainAxisSize: MainAxisSize.min, children: [
-        CustomPaint(size: const Size(29, 32), painter: BrandPainter(accent)),
+        ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child:
+                Image.asset('assets/images/brand.png', width: 40, height: 40)),
         const SizedBox(width: 10),
         const Text('degen detox',
             style: TextStyle(
@@ -471,13 +487,14 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
         : Column(children: [content, const SizedBox(height: 28), grass]);
   }
 
-  Widget morningCard() =>
-      box(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  Widget morningCard() => LuxuryPanel(
+      pro: true,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Icon(Icons.shield_outlined, color: accent, size: 24),
+          Icon(Icons.shield_outlined, color: goldFor(context), size: 24),
           const SizedBox(width: 10),
           Expanded(
-              child: Text(t('morning'),
+              child: GoldText(t('morning'),
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w700))),
           tag('PRO')
@@ -591,37 +608,41 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   Widget learn() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         title(t('learn'), t('learnIntro')),
-        for (final item in [
-          ('cortisol', Icons.wb_sunny_outlined),
-          ('trading', Icons.query_stats),
-          ('breath', Icons.air),
-          ('help', Icons.favorite_border)
-        ])
+        Text(eduText('disclaimer', widget.locale),
+            style: TextStyle(color: subtle, height: 1.6)),
+        const SizedBox(height: 24),
+        for (final article in educationArticles)
           Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: box(Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                      Icon(item.$2, color: accent),
-                      const SizedBox(width: 12),
-                      Expanded(
-                          child: Text(t('${item.$1}Title'),
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w700)))
-                    ]),
-                    const SizedBox(height: 16),
-                    Text(t('${item.$1}Body'),
-                        style: TextStyle(
-                            color: subtle, fontSize: 15, height: 1.8)),
-                    const SizedBox(height: 12),
-                    TextButton.icon(
-                        onPressed: () => launchUrl(
-                            Uri.parse(evidence[item.$1]!),
-                            mode: LaunchMode.externalApplication),
-                        icon: const Icon(Icons.open_in_new, size: 16),
-                        label: Text(t('sources'))),
-                  ]))),
+              child: InkWell(
+                  onTap: () => sheet(article.title(widget.locale),
+                      ArticleBody(article: article, locale: widget.locale)),
+                  borderRadius: BorderRadius.circular(24),
+                  child: box(Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          Icon(article.icon, color: accent),
+                          const SizedBox(width: 12),
+                          Expanded(
+                              child: Text(article.title(widget.locale),
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700)))
+                        ]),
+                        const SizedBox(height: 16),
+                        Text(article.intro(widget.locale),
+                            style: TextStyle(
+                                color: subtle, fontSize: 15, height: 1.8)),
+                        const SizedBox(height: 12),
+                        TextButton.icon(
+                            onPressed: () => sheet(
+                                article.title(widget.locale),
+                                ArticleBody(
+                                    article: article, locale: widget.locale)),
+                            icon: const Icon(Icons.arrow_forward, size: 16),
+                            label: Text(eduText('read', widget.locale))),
+                      ])))),
       ]);
   Widget settings() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -650,6 +671,11 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onChanged: (v) => widget.onSettings(widget.locale, v)),
         ])),
         const SizedBox(height: 24),
+        if (!kIsWeb) ...[
+          rowTile(Icons.verified_user_outlined, t('permissions'),
+              guideText('purposeShort', widget.locale), permissions),
+          const SizedBox(height: 16),
+        ],
         box(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(t('privacy'),
               style:
@@ -657,6 +683,12 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
           const SizedBox(height: 12),
           Text(t(kIsWeb ? 'privacyBody' : 'privacyNative'),
               style: TextStyle(color: subtle, height: 1.7)),
+          const SizedBox(height: 16),
+          Text(guideText('privacy', widget.locale),
+              style: TextStyle(color: subtle, height: 1.7)),
+          const SizedBox(height: 16),
+          Text(guideText('philosophy', widget.locale),
+              style: const TextStyle(height: 1.7)),
           const SizedBox(height: 16),
           OutlinedButton(onPressed: deleteEntries, child: Text(t('delete'))),
         ])),
@@ -666,7 +698,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.2 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+        Text('v0.3 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
             style: TextStyle(color: subtle)),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),
@@ -777,6 +809,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                           try {
                             final p = await native.checkPermissions();
                             if (p['hasAccessibilityPermission'] != true ||
+                                p['serviceConnected'] != true ||
                                 selected.isEmpty) {
                               refresh(() => status = t('needPermission'));
                               return;
@@ -825,14 +858,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   }
 
   Future<void> permissions() => sheet(
-      t('permissions'),
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(t('permissionsBody'), style: const TextStyle(height: 1.7)),
-        const SizedBox(height: 24),
-        FilledButton(
-            onPressed: native.requestAccessibilityPermission,
-            child: Text(t('accessibility'))),
-      ]));
+      t('permissions'), PermissionGuide(locale: widget.locale, native: native));
 
   Future<void> chooseApps() async {
     if (!kIsWeb) {

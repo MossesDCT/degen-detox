@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'domain.dart';
 import 'payments.dart';
 import 'strings.dart';
+import 'luxury.dart';
 
 class PurchasePanel extends StatefulWidget {
   const PurchasePanel(
@@ -95,7 +96,7 @@ class _PurchasePanelState extends State<PurchasePanel> {
     final receipt = widget.service.receipt;
     final nativePayments = !kIsWeb && !qaBuild;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(t('lifetime'),
+      GoldText(t('lifetime'),
           style: const TextStyle(
               fontSize: 28, fontWeight: FontWeight.w700, height: 1.2)),
       const SizedBox(height: 12),
@@ -123,28 +124,33 @@ class _PurchasePanelState extends State<PurchasePanel> {
       ] else
         for (final tier in [AccessTier.sol, AccessTier.skr])
           Container(
+              width: double.infinity,
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
                   border: Border.all(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: .25)),
+                      color: goldFor(context).withValues(alpha: .45)),
+                  gradient: LinearGradient(colors: [
+                    goldFor(context).withValues(alpha: .10),
+                    goldFor(context).withValues(alpha: .02)
+                  ]),
                   borderRadius: BorderRadius.circular(20)),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(tier == AccessTier.sol ? '0.1 SOL' : '500 SKR',
+                    GoldText(tier == AccessTier.sol ? '0.1 SOL' : '500 SKR',
                         style: const TextStyle(
                             fontSize: 30, fontWeight: FontWeight.w700)),
                     const SizedBox(height: 12),
-                    Text(
+                    GoldText(
                         '${t('morning')}\n${t('recipes')} · 20\n${t('wind')}'
                         '${tier == AccessTier.skr ? '\n+ Touch Grass' : ''}',
                         style: const TextStyle(height: 1.9)),
                     const SizedBox(height: 18),
                     FilledButton(
+                        style: FilledButton.styleFrom(
+                            backgroundColor: champagne,
+                            foregroundColor: const Color(0xff192519)),
                         onPressed: !busy &&
                                 nativePayments &&
                                 widget.service.pending == null

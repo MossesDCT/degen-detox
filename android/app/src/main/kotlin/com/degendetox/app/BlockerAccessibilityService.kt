@@ -5,6 +5,7 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
+import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -19,6 +20,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.ImageView
 import java.util.concurrent.TimeUnit
 
 // ── Overlay translated strings (local to BlockerAccessibilityService) ──────────
@@ -33,32 +35,32 @@ private val accessibilityOverlayTranslations = mapOf(
     "lt" to AccessibilityOverlayStrings(
         quote = "Pasaulis palauks.\nTavo nervų sistema\ntau padėkos.",
         subtitle = "Iki ryto fokuso pabaigos",
-        breathe = "Kvėpuok lėtai ir giliai..."
+        breathe = "Kvėpuok švelniai, tau patogiu tempu."
     ),
     "en" to AccessibilityOverlayStrings(
         quote = "The world can wait.\nYour nervous system\nwill thank you.",
         subtitle = "Until morning focus ends",
-        breathe = "Breathe slowly and deeply..."
+        breathe = "Breathe gently, at your own pace."
     ),
     "es" to AccessibilityOverlayStrings(
         quote = "El mundo puede esperar.\nTu sistema nervioso\nte lo agradecerá.",
         subtitle = "Hasta que termine el enfoque matutino",
-        breathe = "Respira lenta y profundamente..."
+        breathe = "Respira suavemente, a tu ritmo."
     ),
     "de" to AccessibilityOverlayStrings(
         quote = "Die Welt kann warten.\nDein Nervensystem\nwird es dir danken.",
         subtitle = "Bis der Morgenfokus endet",
-        breathe = "Atme langsam und tief..."
+        breathe = "Atme sanft in deinem eigenen Tempo."
     ),
     "fr" to AccessibilityOverlayStrings(
         quote = "Le monde peut attendre.\nVotre système nerveux\nvous remerciera.",
         subtitle = "Jusqu'à la fin du focus matinal",
-        breathe = "Respirez lentement et profondément..."
+        breathe = "Respirez doucement, à votre rythme."
     ),
     "ko" to AccessibilityOverlayStrings(
         quote = "세상은 기다릴 수 있어요.\n당신의 신경계가\n감사할 거예요.",
         subtitle = "아침 집중 시간 종료까지",
-        breathe = "천천히 깊게 호흡하세요..."
+        breathe = "편안한 속도로 부드럽게 호흡하세요."
     )
 )
 
@@ -306,20 +308,34 @@ class BlockerAccessibilityService : AccessibilityService() {
     private fun buildOverlayLayout(): View {
         val context: Context = this
 
-        // ── Root — opaque sage green ──
+        // Native protection screen shares the app's forest/gold visual system.
         val root = FrameLayout(context).apply {
-            setBackgroundColor(Color.parseColor("#B8F2BD"))
+            setBackgroundColor(Color.parseColor("#0B2118"))
             isClickable = true
             // isFocusable must stay false so FLAG_NOT_FOCUSABLE remains effective
             isFocusable = false
         }
+        try {
+            val image = ImageView(context).apply {
+                assets.open("flutter_assets/assets/images/forest.webp").use {
+                    setImageBitmap(BitmapFactory.decodeStream(it))
+                }
+                scaleType = ImageView.ScaleType.CENTER_CROP
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            }
+            root.addView(image, FrameLayout.LayoutParams(-1, -1))
+            root.addView(View(context).apply {
+                background = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                    intArrayOf(Color.parseColor("#E60B2118"), Color.parseColor("#B30B2118")))
+            }, FrameLayout.LayoutParams(-1, -1))
+        } catch (_: Exception) { /* Solid readable background remains available. */ }
 
         // ── Breathing circle ──
         val circleSize = dp(180)
         val circle = View(context).apply {
             val gd = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(Color.parseColor("#80A8E6B0"))
+                setColor(Color.parseColor("#406EAB71"))
             }
             background = gd
             alpha = 0.6f
@@ -341,11 +357,11 @@ class BlockerAccessibilityService : AccessibilityService() {
         // App name label
         val appName = TextView(context).apply {
             text = "Degen Detox"
-            setTextColor(Color.parseColor("#1A4D1A"))
+            setTextColor(Color.parseColor("#ECD39C"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
             gravity = Gravity.CENTER
-            alpha = 0.6f
+            alpha = 1f
         }
         content.addView(appName, linearParams().apply {
             bottomMargin = dp(48)
@@ -354,7 +370,7 @@ class BlockerAccessibilityService : AccessibilityService() {
         // Main quote
         val quote = TextView(context).apply {
             text = overlayStr.quote
-            setTextColor(Color.parseColor("#1A4D1A"))
+            setTextColor(Color.parseColor("#F3F6EE"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 26f)
             typeface = Typeface.create("sans-serif", Typeface.BOLD)
             gravity = Gravity.CENTER
@@ -367,7 +383,7 @@ class BlockerAccessibilityService : AccessibilityService() {
         // Countdown
         countdownTextView = TextView(context).apply {
             text = formatRemainingTime()
-            setTextColor(Color.parseColor("#2D6E2D"))
+            setTextColor(Color.parseColor("#ECD39C"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 52f)
             typeface = Typeface.MONOSPACE
             gravity = Gravity.CENTER
@@ -380,7 +396,7 @@ class BlockerAccessibilityService : AccessibilityService() {
         // Subtitle
         val subtitle = TextView(context).apply {
             text = overlayStr.subtitle
-            setTextColor(Color.parseColor("#3D7E3D"))
+            setTextColor(Color.parseColor("#BDCDC1"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             gravity = Gravity.CENTER
         }
@@ -391,10 +407,10 @@ class BlockerAccessibilityService : AccessibilityService() {
         // Breathing instruction
         val breathText = TextView(context).apply {
             text = overlayStr.breathe
-            setTextColor(Color.parseColor("#4D8E4D"))
+            setTextColor(Color.parseColor("#BDCDC1"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             gravity = Gravity.CENTER
-            alpha = 0.7f
+            alpha = 1f
         }
         content.addView(breathText)
 
@@ -411,6 +427,7 @@ class BlockerAccessibilityService : AccessibilityService() {
 
     private fun startBreathAnimation() {
         breathAnimator?.cancel()
+        if (android.os.Build.VERSION.SDK_INT >= 26 && !ValueAnimator.areAnimatorsEnabled()) return
         breathAnimator = ValueAnimator.ofFloat(0.6f, 1.2f).apply {
             duration = 4000
             repeatMode = ValueAnimator.REVERSE

@@ -54,6 +54,15 @@ class MainActivity : FlutterActivity() {
                     "getInstalledApps" -> handleGetInstalledApps(result)
                     "checkPermissions" -> handleCheckPermissions(result)
                     "requestAccessibilityPermission" -> handleRequestAccessibility(result)
+                    "openAppDetails" -> {
+                        try {
+                            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.parse("package:$packageName")))
+                            result.success(true)
+                        } catch (e: Exception) {
+                            result.error("SETTINGS_ERROR", e.message, null)
+                        }
+                    }
                     "startBlocking" -> handleStartBlocking(call, result)
                     "stopBlocking" -> handleStopBlocking(result)
                     "isBlockingActive" -> handleIsBlockingActive(result)
@@ -160,7 +169,8 @@ class MainActivity : FlutterActivity() {
         val hasAccessibility = hasAccessibilityPermission()
         result.success(
             mapOf(
-                "hasAccessibilityPermission" to hasAccessibility
+                "hasAccessibilityPermission" to hasAccessibility,
+                "serviceConnected" to BlockerAccessibilityService.isRunning
             )
         )
     }
@@ -273,6 +283,10 @@ class MainActivity : FlutterActivity() {
             if (blockedPackages.isEmpty() || wakeHour !in 0..23 ||
                 wakeMinute !in 0..59 || durationHours !in 1..4) {
                 result.error("INVALID_ARGS", "Invalid morning plan", null); return
+            }
+            if (!hasAccessibilityPermission() || !BlockerAccessibilityService.isRunning) {
+                result.error("ACCESSIBILITY_REQUIRED", "Enable and connect Accessibility first", null)
+                return
             }
 
             // Save schedule to SharedPreferences

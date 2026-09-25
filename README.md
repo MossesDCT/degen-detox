@@ -1,6 +1,6 @@
 # Degen Detox
 
-Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.2 adds Mobile Wallet Adapter checkout, on-chain receipt verification, persistent native reminders and morning blocking integration.
+Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.3 adds forest/parallax visuals, gold Pro typography, corrected launcher artwork, eight educational articles in six languages, and a consent-based Android permission guide. Real Mobile Wallet Adapter checkout, on-chain receipt verification, native reminders and morning blocking are retained.
 
 This is a device-test release candidate. Automated tests and compilation do not establish that Seeker wallet interaction, background alarms and Accessibility behave correctly on the user's specific device.
 
@@ -52,7 +52,7 @@ There is no deployed centralized licensing server. Verification trusts the confi
 
 ## Before public release
 
-Complete `TESTING.md` on a physical Solana Seeker. In particular verify wallet cancellation, successful SOL and SKR checkout with separate payer wallets, pending-payment recovery, reinstall/restore, permission denial, overnight blocking and background reminders. No real wallet transaction was made by the build agent. The automated suite currently contains 30 passing tests; static analysis of active code reports no issues.
+Complete `INSTALL_v0.3_LT.md` and the detailed cases in `TESTING.md` on a physical Solana Seeker. In particular verify wallet cancellation, successful SOL and SKR checkout with separate payer wallets, pending-payment recovery, reinstall/restore, permission denial, overnight blocking and background reminders. No real wallet transaction was made by the build agent. The automated suite currently contains 40 passing tests; static analysis of active code reports no issues. The older TESTING.md describes the v0.2 QA package; v0.3 delivery is the real-payment production flavor, not a free-unlocked QA build.
 
 Production signing, native-speaker translation review, legal/contact details and hackathon eligibility confirmation remain release requirements. See `PROVENANCE.md`; this is a disclosed derivative, not a claim that all code was newly authored for a hackathon.
 

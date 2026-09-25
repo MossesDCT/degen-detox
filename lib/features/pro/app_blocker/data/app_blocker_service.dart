@@ -47,12 +47,17 @@ class AppBlockerNativeService {
     return {
       'hasAccessibilityPermission':
           result['hasAccessibilityPermission'] as bool,
+      'serviceConnected': result['serviceConnected'] == true,
     };
   }
 
   /// Opens Accessibility Settings so the user can enable the blocker service.
   Future<void> requestAccessibilityPermission() async {
     await _channel.invokeMethod('requestAccessibilityPermission');
+  }
+
+  Future<void> openAppDetails() async {
+    await _channel.invokeMethod('openAppDetails');
   }
 
   /// Starts the blocking foreground service.
