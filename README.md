@@ -1,8 +1,8 @@
 # Degen Detox
 
-Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.8 adds a later 500 SKR upgrade for SOL Pro owners, free local urge insights, explicit preinstalled Google consumer-app selection and a framed forest Today screen. The owner confirmed a real SKR checkout worked on Seeker before this release. The new SOL-to-SKR upgrade is covered by automated tests but still needs device acceptance. Strict blocking, numeric wake input and wallet-return fixes are retained.
+Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.9 localizes recipe measurements, adds persistent ingredient checkboxes and an optional custom fourth evening ritual step in six languages. v0.8's SKR upgrade, urge insights and Google consumer-app filtering are retained. The owner confirmed a real SKR checkout worked on Seeker; new SOL-to-SKR upgrade device acceptance remains separate.
 
-The delivered v0.8 APK uses normal production flags, without owner reset tools. Existing purchases, check-ins and block settings are preserved; there is no entitlement reset migration.
+The delivered v0.9 APK uses normal production flags, without owner reset tools. Existing purchases, check-ins and block settings are preserved; there is no entitlement reset migration. Ingredient checks and user-authored ritual text stay in local preferences, not an encrypted medical record; browser previews keep these only in memory.
 
 This is a device-test release candidate. Automated tests and compilation do not establish that Seeker wallet interaction, background alarms and Accessibility behave correctly on the user's specific device.
 

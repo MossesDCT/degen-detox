@@ -22,6 +22,9 @@ import 'payments.dart';
 import 'purchase_panel.dart';
 import 'home_intro.dart';
 import 'impulse_insights.dart';
+import 'ritual_store.dart';
+import 'recipe_panel.dart';
+import 'wind_panel.dart';
 
 const pine = Color(0xff0b1712),
     leaf = Color(0xffc4eb87),
@@ -146,6 +149,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   final native = AppBlockerNativeService();
   final reminders = GrassReminders();
   final payments = PaymentService();
+  final ritualStore = RitualStore();
   AccessPolicy get access => AccessPolicy(
       verified:
           qaBuild ? AccessTier.skr : payments.receipt?.tier ?? AccessTier.free,
@@ -387,7 +391,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         const Spacer(),
                         label('SOLANA MOBILE'),
                         const SizedBox(height: 10),
-                        Text('Degen Detox · v0.8',
+                        Text('Degen Detox · v0.9',
                             style: TextStyle(color: subtle, fontSize: 12)),
                       ])),
             Expanded(
@@ -744,7 +748,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.8 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+        Text('v0.9 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
             style: TextStyle(color: subtle)),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),
@@ -1016,30 +1020,8 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
         ]));
   }
 
-  Future<void> recipe(Recipe r) => sheet(
-      r.name,
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('${r.totalTimeLabel} · ${r.servings} ${t('servings')}',
-            style: TextStyle(color: accent)),
-        const SizedBox(height: 24),
-        label(t('ingredients')),
-        const SizedBox(height: 12),
-        for (final i in r.ingredients)
-          Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text('• $i', style: const TextStyle(height: 1.6))),
-        const SizedBox(height: 24),
-        label(t('method')),
-        const SizedBox(height: 12),
-        for (var i = 0; i < r.instructions.length; i++)
-          Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Text('${i + 1}. ${r.instructions[i]}',
-                  style: const TextStyle(height: 1.7))),
-        const SizedBox(height: 12),
-        Text(t('foodNote'),
-            style: TextStyle(color: subtle, fontSize: 12, height: 1.7)),
-      ]));
+  Future<void> recipe(Recipe r) => sheet(r.name,
+      RecipePanel(recipe: r, locale: widget.locale, store: ritualStore));
   Future<void> grass() async {
     if (!access.showGrass) {
       await upgrade();
@@ -1129,41 +1111,8 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
       await upgrade();
       return;
     }
-    final checked = <int>{};
-    bool done = false;
     await sheet(
-        t('wind'),
-        StatefulBuilder(
-            builder: (c, refresh) =>
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(t('windDesc'),
-                      style: TextStyle(color: subtle, height: 1.7)),
-                  const SizedBox(height: 24),
-                  for (var i = 1; i <= 3; i++)
-                    CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        value: checked.contains(i),
-                        title: Text(t('wind$i')),
-                        onChanged: done
-                            ? null
-                            : (v) => refresh(() {
-                                  v == true
-                                      ? checked.add(i)
-                                      : checked.remove(i);
-                                })),
-                  const SizedBox(height: 24),
-                  FilledButton(
-                      onPressed: checked.length == 3 && !done
-                          ? () => refresh(() => done = true)
-                          : null,
-                      child: Text(t('complete'))),
-                  if (done)
-                    Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Icon(Icons.check_circle_outline,
-                            size: 40, color: accent)),
-                ])));
+        t('wind'), WindPanel(locale: widget.locale, store: ritualStore));
   }
 }
 

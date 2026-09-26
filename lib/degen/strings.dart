@@ -299,12 +299,12 @@ const words = <String, List<String>>{
     '트레이딩 마무리'
   ],
   'windDesc': [
-    'A three-step routine to finish your trading session.',
-    'Trijų žingsnių ritualas prekybos sesijai užbaigti.',
-    'Una rutina de tres pasos para terminar la sesión.',
-    'Une routine en trois étapes pour terminer la séance.',
-    'Drei Schritte zum Abschluss deiner Handelssitzung.',
-    '거래 세션을 마치는 3단계 루틴.'
+    'Finish your trading session with three steps and an optional fourth of your own.',
+    'Užbaik prekybos sesiją trimis žingsniais ir, jei nori, pridėk savo ketvirtą.',
+    'Termina tu sesión con tres pasos y un cuarto opcional creado por ti.',
+    'Termine ta séance en trois étapes et ajoute, si tu le souhaites, une quatrième personnelle.',
+    'Beende deine Sitzung mit drei Schritten und optional einem eigenen vierten.',
+    '세 단계로 거래 세션을 마치고, 원하면 나만의 네 번째 단계를 추가하세요.'
   ],
   'wind1': [
     'Review your own risk plan before stepping away.',

@@ -1,6 +1,7 @@
 import '../features/pro/recipes/data/datasources/recipe_local_datasource.dart';
 import '../features/pro/recipes/domain/entities/recipe.dart';
 import 'strings.dart';
+import 'ritual_strings.dart';
 
 enum AccessTier { free, sol, skr }
 
@@ -48,8 +49,18 @@ List<Recipe> safeRecipes(String locale) => RecipeLocalDatasource()
           id: r.id,
           name: r.name,
           description: tr('foodNote', locale),
-          ingredients: r.ingredients,
-          instructions: r.instructions,
+          ingredients: [
+            for (var i = 0; i < r.ingredients.length; i++)
+              localizeRecipeMeasures(
+                  // Do not carry inherited efficacy claims into ingredient labels.
+                  r.id == 'recipe_004' && (i == 2 || i == 6)
+                      ? r.ingredients[i].split(' (').first
+                      : r.ingredients[i],
+                  locale),
+          ],
+          instructions: r.instructions
+              .map((text) => localizeRecipeMeasures(text, locale))
+              .toList(),
           prepTimeMinutes: r.prepTimeMinutes,
           cookTimeMinutes: r.cookTimeMinutes,
           servings: r.servings,

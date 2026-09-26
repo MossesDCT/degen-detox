@@ -83,6 +83,7 @@ void main() {
       await tester.tap(find.text(tr('wind$i', 'en')));
       await tester.pumpAndSettle();
     }
+    await tester.ensureVisible(find.text(tr('complete', 'en')));
     await tester.tap(find.text(tr('complete', 'en')));
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.check_circle_outline), findsOneWidget);
