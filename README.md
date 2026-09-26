@@ -1,6 +1,6 @@
 # Degen Detox
 
-Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.6 improves permission onboarding, searchable app selection and selected-app visibility, and fixes the HOME transition prematurely dismissing the blocker notice. v0.5 wallet-return fixes, payment recipient, one home slogan and Free → Pro → SKR ordering are preserved. The owner confirmed a successful real v0.4 payment and that the Accessibility blocker works on Seeker.
+Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.7 opens Morning Shield without an installed-app scan, adds strict active-block editing guards and direct numeric wake input. A compile-gated manual local-Pro reset is available only in the owner-test APK for the requested SKR checkout test. The owner confirmed the v0.6 timed blocker notice works on Seeker. Wallet-return fixes, recipient and existing visual design are retained.
 
 This is a device-test release candidate. Automated tests and compilation do not establish that Seeker wallet interaction, background alarms and Accessibility behave correctly on the user's specific device.
 
@@ -22,6 +22,8 @@ flutter test
 flutter build apk --release --flavor qa --dart-define=DEGEN_QA=true --target-platform android-arm64
 # Real mainnet wallet checkout; no QA access:
 flutter build apk --release --flavor production --target-platform android-arm64
+# OWNER ONLY: real payments, manual local receipt reset, never for public distribution:
+flutter build apk --release --flavor production --target-platform android-arm64 --dart-define=DEGEN_OWNER_TEST_TOOLS=true
 # Browser UI only; checkout disabled:
 flutter build web --release
 ```
@@ -46,13 +48,13 @@ There is no deployed centralized licensing server. Verification trusts the confi
 
 - Accessibility observes window-change package names, not screen content. The overlay uses `TYPE_ACCESSIBILITY_OVERLAY`; the main UI requests Accessibility explicitly.
 - Native schedules handle midnight, local calendar days, reboot, package update and clock/timezone changes.
-- System apps, launchers, the app itself and recognized wallets are excluded from the block list. Emergency stop is available in Morning Shield and Settings.
+- System apps, launchers, the app itself and recognized wallets are excluded from the block list. v0.7 has no in-app stop button. During an active block, native endpoints reject stop, cancel, reschedule and replacement sessions until the deadline; Android system control remains available.
 - Recurring Grass notifications use a native receiver that schedules the next interval even without Flutter running. Android can delay inexact alarms; force-stop suppresses app background work until relaunch. Tapping the notification opens the animation; no automatic full-screen takeover.
 - Six languages, dark/light appearance, free breathing, education and Impulse Check.
 
 ## Before public release
 
-Complete `INSTALL_v0.6_LT.md`, `QA_v0.6.md` and the detailed cases in `TESTING.md` on a physical Solana Seeker. In particular verify permission navigation, 10-second notice/dismissal, search/selection persistence, wallet return and cancellation, SOL and SKR checkout, pending-payment recovery, restore, overnight blocking and background reminders. No real wallet transaction was made by the build agent. Use Restore with the existing paying wallet to exercise the shared return path without paying again. The same package, signing certificate and receipt keys preserve locally saved Pro access.
+Complete `INSTALL_v0.7_LT.md`, `QA_v0.7.md` and relevant cases in `TESTING.md` on a physical Solana Seeker. Superseded historical stop-button checks no longer apply. Verify fast opening, strict timing, numeric entry, wallet return, SKR checkout and Grass reminders. No real wallet transaction was made by the build agent. Restore remains available without repurchase. The same package, signing certificate and receipt keys preserve local Pro until the owner explicitly uses the test-only reset. Public builds must omit DEGEN_OWNER_TEST_TOOLS.
 
 The `vendor/solana_mobile_client` override preserves upstream 0.1.2 APIs and license, with a narrow Android lifecycle patch documented in `DEGEN_PATCH.md`. The patched dependency must be included with the source project.
 

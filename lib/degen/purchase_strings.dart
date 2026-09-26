@@ -224,12 +224,12 @@ const purchaseWords = <String, List<String>>{
     'Android 권한 설정'
   ],
   'permissionsBody': [
-    'Morning Shield needs Accessibility to detect only which app opens and return blocked apps to Home. It does not read messages, record screens or send app usage to a server. Enable it voluntarily in Android Settings. You can stop blocking here at any time.',
-    'Ryto apsaugai reikia Pritaikymo neįgaliesiems leidimo, kad aptiktų atidaromą programėlę ir grąžintų į pradžios ekraną. Žinutės neskaitomos, ekranas neįrašomas, naudojimas nesiunčiamas į serverį. Leidimą įjunk savanoriškai Android nustatymuose. Blokavimą čia gali bet kada sustabdyti.',
-    'Morning Shield usa Accesibilidad para detectar la app abierta y devolver las bloqueadas al inicio. No lee mensajes, graba la pantalla ni envía uso a servidores. Actívalo voluntariamente en Ajustes. Puedes detenerlo aquí.',
-    'Morning Shield utilise l’Accessibilité pour détecter l’app ouverte et revenir à l’accueil. Aucun message lu, écran enregistré ni usage envoyé à un serveur. Activez-la volontairement dans les réglages. Arrêt possible ici à tout moment.',
-    'Morning Shield benötigt Bedienungshilfen, um geöffnete Apps zu erkennen und blockierte Apps zum Startbildschirm zurückzuleiten. Keine Nachrichten, Bildschirmaufnahmen oder Übermittlung der Nutzung. Freiwillig in Android aktivieren. Hier jederzeit beenden.',
-    'Morning Shield는 접근성으로 열린 앱을 감지하고 차단 앱을 홈 화면으로 돌려보냅니다. 메시지 읽기, 화면 녹화, 사용 기록 전송을 하지 않습니다. Android 설정에서 자발적으로 활성화하며 언제든 여기서 중지할 수 있습니다.'
+    'Morning Shield uses Accessibility to detect selected apps. No screen content is retrieved. An active block ends automatically and cannot be edited in this app.',
+    'Ryto apsauga naudoja pritaikymo neįgaliesiems tarnybą pasirinktoms programėlėms atpažinti. Ekrano turinys neskaitomas. Aktyvus blokas baigiasi automatiškai ir šioje programėlėje nekeičiamas.',
+    'Accesibilidad detecta las apps elegidas sin leer la pantalla. El bloqueo activo termina automáticamente y no se edita en esta app.',
+    'L’accessibilité détecte les apps choisies sans lire l’écran. Le blocage actif se termine automatiquement et ne se modifie pas dans cette app.',
+    'Bedienungshilfen erkennen gewählte Apps ohne Bildschirminhalte zu lesen. Aktive Sperren enden automatisch und sind in dieser App nicht änderbar.',
+    '접근성은 화면 내용을 읽지 않고 선택한 앱을 감지합니다. 활성 차단은 자동 종료되며 이 앱에서 변경할 수 없습니다.'
   ],
   'accessibility': [
     'Open Accessibility settings',

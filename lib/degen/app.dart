@@ -8,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'luxury.dart';
 import 'education.dart';
 import 'permission_guide.dart';
-import 'blocker_apps.dart';
+import 'morning_shield.dart';
+import 'strict_strings.dart';
 import '../features/pro/app_blocker/data/app_blocker_service.dart';
 import '../features/breathing/data/datasources/breathing_local_datasource.dart';
 import '../features/breathing/domain/entities/breathing_technique.dart';
@@ -138,7 +139,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   List<InstalledApp> apps = [];
   Set<String> selected = {};
   Map<String, String> selectedNames = {};
-  String? status;
+  bool morningOpen = false;
   bool grassEnabled = false;
   final native = AppBlockerNativeService();
   final reminders = GrassReminders();
@@ -384,7 +385,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         const Spacer(),
                         label('SOLANA MOBILE'),
                         const SizedBox(height: 10),
-                        Text('Degen Detox · v0.6',
+                        Text('Degen Detox · v0.7',
                             style: TextStyle(color: subtle, fontSize: 12)),
                       ])),
             Expanded(
@@ -687,6 +688,12 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   Widget settings() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         title(t('settings'), 'Degen Detox'),
+        if (ownerTestTools && !kIsWeb) ...[
+          OutlinedButton(
+              onPressed: resetOwnerPro,
+              child: Text(strictText('testReset', widget.locale))),
+          const SizedBox(height: 20),
+        ],
         box(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(t('language'),
               style:
@@ -738,13 +745,10 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.6 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+        Text('v0.7 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
             style: TextStyle(color: subtle)),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),
-        if (!kIsWeb)
-          TextButton(
-              onPressed: native.cancelSchedule, child: Text(t('stopBlocking'))),
       ]);
   Future<void> deleteEntries() async {
     final ok = await showDialog<bool>(
@@ -782,140 +786,43 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   }
 
   Future<void> morning() async {
-    if (!access.showPro) {
-      await upgrade();
-      return;
-    }
-    status = null;
+    if (morningOpen) return;
+    morningOpen = true;
     try {
-      apps = await installedCandidates();
-      for (final a in apps) {
-        if (selected.contains(a.packageName)) {
-          selectedNames[a.packageName] = a.appName;
-        }
+      if (!access.showPro) {
+        await upgrade();
+        return;
       }
-    } catch (_) {
-      /* Saved names still identify selections while native lookup fails. */
+      // Open immediately. Never enumerate installed packages before showing UI.
+      await sheet(
+          t('morning'),
+          MorningShieldPanel(
+            locale: widget.locale,
+            native: native,
+            preview: kIsWeb || !access.pro,
+            initialWake: wake,
+            initialHours: hours,
+            initialSelected: selected,
+            initialNames: selectedNames,
+            initialApps: apps,
+            loadApps: installedCandidates,
+            showSheet: sheet,
+            permissions: permissions,
+            onSaved: (newWake, newHours, newSelected, newNames, newApps) async {
+              if (!mounted) return;
+              setState(() {
+                wake = newWake;
+                hours = newHours;
+                selected = {...newSelected};
+                selectedNames = {...newNames};
+                apps = [...newApps];
+              });
+              await persist();
+            },
+          ));
+    } finally {
+      morningOpen = false;
     }
-    if (!mounted) return;
-    await sheet(
-        t('morning'),
-        StatefulBuilder(
-            builder: (c, refresh) =>
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(
-                      t(access.pro && !kIsWeb
-                          ? 'permissionsBody'
-                          : 'androidOnly'),
-                      style:
-                          TextStyle(color: subtle, fontSize: 13, height: 1.7)),
-                  const SizedBox(height: 24),
-                  ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(t('wake')),
-                      trailing: Text(wake.format(c),
-                          style: TextStyle(fontSize: 24, color: accent)),
-                      onTap: () async {
-                        final value =
-                            await showTimePicker(context: c, initialTime: wake);
-                        if (value != null) {
-                          setState(() => wake = value);
-                          refresh(() {});
-                        }
-                      }),
-                  const SizedBox(height: 20),
-                  label(t('duration')),
-                  const SizedBox(height: 12),
-                  Wrap(spacing: 12, children: [
-                    for (var i = 1; i <= 4; i++)
-                      ChoiceChip(
-                          label: Text('$i ${t(i == 1 ? 'hour' : 'hours')}'),
-                          selected: hours == i,
-                          onSelected: (_) {
-                            setState(() => hours = i);
-                            refresh(() {});
-                          })
-                  ]),
-                  const SizedBox(height: 24),
-                  if (access.pro && !kIsWeb) ...[
-                    OutlinedButton.icon(
-                        onPressed: permissions,
-                        icon: const Icon(Icons.accessibility_new),
-                        label: Text(t('permissions'))),
-                    const SizedBox(height: 12),
-                  ],
-                  OutlinedButton.icon(
-                      onPressed: () async {
-                        await chooseApps();
-                        refresh(() {});
-                      },
-                      icon: const Icon(Icons.apps),
-                      label: Text('${t('selectApps')} · ${selected.length}')),
-                  const SizedBox(height: 16),
-                  SelectedAppsSummary(
-                      locale: widget.locale,
-                      selected: selected,
-                      apps: apps,
-                      savedNames: selectedNames),
-                  const SizedBox(height: 12),
-                  Text(blockerText('apply', widget.locale),
-                      style:
-                          TextStyle(color: subtle, fontSize: 12, height: 1.6)),
-                  const SizedBox(height: 20),
-                  FilledButton(
-                      onPressed: () async {
-                        await persist();
-                        // Preview settings cannot call into the blocking engine.
-                        if (access.pro && !kIsWeb) {
-                          try {
-                            final p = await native.checkPermissions();
-                            if (p['hasAccessibilityPermission'] != true ||
-                                p['serviceConnected'] != true ||
-                                selected.isEmpty) {
-                              refresh(() => status = t('needPermission'));
-                              return;
-                            }
-                            await native.scheduleBlocking(
-                                blockedPackages: selected.toList(),
-                                wakeHour: wake.hour,
-                                wakeMinute: wake.minute,
-                                durationHours: hours);
-                            refresh(() => status = t('blockSaved'));
-                          } catch (_) {
-                            refresh(() => status = t('needPermission'));
-                          }
-                          return;
-                        }
-                        refresh(() => status = t('saved'));
-                      },
-                      child: Text(t('save'))),
-                  if (access.pro && !kIsWeb)
-                    TextButton(
-                        onPressed: () async {
-                          await native.cancelSchedule();
-                          if (c.mounted) refresh(() => status = t('disable'));
-                        },
-                        child: Text(t('stopBlocking'))),
-                  if (qaBuild && !kIsWeb)
-                    OutlinedButton(
-                        onPressed: () async {
-                          final p = await native.checkPermissions();
-                          if (p['hasAccessibilityPermission'] != true ||
-                              selected.isEmpty) {
-                            refresh(() => status = t('needPermission'));
-                            return;
-                          }
-                          await native.startBlocking(
-                              blockedPackages: selected.toList(),
-                              durationMinutes: 2);
-                          if (c.mounted) refresh(() => status = t('saved'));
-                        },
-                        child: Text(t('testBlock'))),
-                  if (status != null)
-                    Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Text(status!, style: TextStyle(color: accent))),
-                ])));
   }
 
   Future<void> permissions() => sheet(
@@ -939,25 +846,52 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> chooseApps() async {
-    if (!mounted) return;
-    await sheet(
-        t('apps'),
-        BlockerAppPicker(
-            locale: widget.locale,
-            initialSelected: selected,
-            loadApps: installedCandidates,
-            onSave: (selection, candidates) async {
-              setState(() {
-                selected = selection;
-                apps = candidates;
-                for (final a in candidates) {
-                  selectedNames[a.packageName] = a.appName;
-                }
-              });
-              Navigator.pop(context);
-              await persist();
-            }));
+  Future<void> resetOwnerPro() async {
+    if (!ownerTestTools || payments.busy) return;
+    final yes = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+              title: Text(strictText('testReset', widget.locale)),
+              content: SingleChildScrollView(
+                  child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text(strictText('resetBody', widget.locale)),
+                    if (payments.receipt != null) ...[
+                      const SizedBox(height: 16),
+                      SelectableText(payments.receipt!.wallet),
+                      const SizedBox(height: 8),
+                      SelectableText(payments.receipt!.signature,
+                          style: const TextStyle(fontSize: 12)),
+                    ],
+                  ])),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(c, false),
+                    child: Text(t('cancel'))),
+                FilledButton(
+                    onPressed: () => Navigator.pop(c, true),
+                    child: Text(strictText('testReset', widget.locale))),
+              ],
+            ));
+    if (yes != true || !mounted) return;
+    var message = strictText('resetDone', widget.locale);
+    try {
+      await payments.resetLocalProForOwnerTest();
+      if (mounted) setState(() => previewTier = AccessTier.free);
+      // Clear only optional grass reminders, never the active blocker schedule.
+      await reminders.cancel();
+      if (mounted) setState(() => grassEnabled = false);
+    } on PaymentFailure {
+      message = strictText('resetDenied', widget.locale);
+    } catch (_) {
+      message = t('networkError');
+    }
+    if (mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }
   }
 
   Future<void> impulse() async {

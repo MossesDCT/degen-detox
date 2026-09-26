@@ -13,6 +13,9 @@ import 'domain.dart';
 import 'wallet_handoff.dart';
 
 const qaBuild = bool.fromEnvironment('DEGEN_QA');
+// Not enabled in public production builds. Owner explicitly requested a local
+// reset to test a second, real SKR purchase without changing anyone else's license.
+const ownerTestTools = bool.fromEnvironment('DEGEN_OWNER_TEST_TOOLS');
 const merchant = '6vqJTwDWoNXauztA3e8psbnrm4bNWFDAG218NbAMPgaG';
 const skrMint = 'SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3';
 const tokenProgram = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
@@ -147,6 +150,30 @@ class PaymentService {
   PurchaseReceipt? receipt;
   Map<String, dynamic>? pending;
   bool get busy => _busy;
+
+  Future<void> resetLocalProForOwnerTest() async {
+    if (!ownerTestTools || kIsWeb || qaBuild) {
+      throw const PaymentFailure('testResetUnavailable');
+    }
+    if (_busy || pending != null) {
+      throw const PaymentFailure('pendingPayment');
+    }
+    _busy = true;
+    try {
+      if (await _storage.read(key: _pendingKey) != null) {
+        throw const PaymentFailure('pendingPayment');
+      }
+      final stored = await _storage.read(key: _receiptKey);
+      if (stored != null) {
+        await _storage.write(
+            key: 'degen_owner_test_receipt_backup_v1', value: stored);
+      }
+      await _storage.delete(key: _receiptKey);
+      receipt = null;
+    } finally {
+      _busy = false;
+    }
+  }
 
   Future<dynamic> rpc(String method, List<dynamic> params) async {
     final uri = Uri.parse(rpcEndpoint);

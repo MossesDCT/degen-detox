@@ -7,14 +7,16 @@ import java.util.Calendar
 import org.json.JSONArray
 
 object BlockSafety {
-    fun allowed(context: Context, pkg: String): Boolean {
+    fun allowed(context: Context, pkg: String,
+                knownInfo: ApplicationInfo? = null, knownHomes: Set<String>? = null): Boolean {
         if (pkg == context.packageName || pkg.startsWith("com.degendetox.app")) return false
         val p = pkg.lowercase()
         if (listOf("wallet", "solana", "seeker", "seedvault", "phantom", "solflare", "backpack")
                 .any { p.contains(it) }) return false
         return try {
-            val info = context.packageManager.getApplicationInfo(pkg, 0)
+            val info = knownInfo ?: context.packageManager.getApplicationInfo(pkg, 0)
             if ((info.flags and ApplicationInfo.FLAG_SYSTEM) != 0) return false
+            if (knownHomes != null) return pkg !in knownHomes
             val homes = context.packageManager.queryIntentActivities(
                 Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0)
             homes.none { it.activityInfo.packageName == pkg }

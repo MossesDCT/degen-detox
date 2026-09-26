@@ -26,8 +26,15 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
+    private val appLoader = Executors.newSingleThreadExecutor()
+
+    override fun onDestroy() {
+        appLoader.shutdown()
+        super.onDestroy()
+    }
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         // Android 12+ (API 31): transition from the system launch screen to Flutter.
@@ -73,7 +80,24 @@ class MainActivity : FlutterActivity() {
                             result.error("WALLET_RETURN", e.message, null)
                         }
                     }
-                    "getInstalledApps" -> handleGetInstalledApps(result)
+                    "getInstalledApps" -> {
+                        // Package labels, icon decoding and PNG encoding must not
+                        // stall Android's UI thread or Flutter input delivery.
+                        appLoader.execute { handleGetInstalledApps(result) }
+                    }
+                    "getBlockState" -> {
+                        BlockSchedule.refresh(this, false)
+                        val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+                        result.success(mapOf(
+                            "active" to StrictBlockPolicy.isActive(
+                                BlockerAccessibilityService.isBlockingActive,
+                                BlockerAccessibilityService.blockEndTimeMs, System.currentTimeMillis()),
+                            "endTimeMs" to BlockerAccessibilityService.blockEndTimeMs,
+                            "packages" to BlockerAccessibilityService.blockedPackages,
+                            "serviceConnected" to BlockerAccessibilityService.isRunning,
+                            "scheduled" to prefs.getBoolean("flutter.blocker_schedule_active", false)
+                        ))
+                    }
                     "checkPermissions" -> handleCheckPermissions(result)
                     "requestAccessibilityPermission" -> handleRequestAccessibility(result)
                     "openAppDetails" -> {
@@ -130,16 +154,21 @@ class MainActivity : FlutterActivity() {
 
             val ownPackage = applicationContext.packageName
             val apps = mutableListOf<Map<String, String>>()
+            val seen = mutableSetOf<String>()
+            val homes = pm.queryIntentActivities(
+                Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0
+            ).map { it.activityInfo.packageName }.toSet()
 
             for (info in resolveInfos) {
                 val pkg = info.activityInfo.packageName
-                if (pkg == ownPackage || !BlockSafety.allowed(this, pkg)) continue
+                if (pkg == ownPackage || !seen.add(pkg)) continue
 
                 val appInfo = try {
                     pm.getApplicationInfo(pkg, 0)
                 } catch (e: Exception) {
                     continue
                 }
+                if (!BlockSafety.allowed(this, pkg, appInfo, homes)) continue
 
                 val appName = pm.getApplicationLabel(appInfo).toString()
                 val iconBase64 = try {
@@ -158,10 +187,15 @@ class MainActivity : FlutterActivity() {
                 )
             }
 
-            result.success(apps.distinctBy { it["packageName"] }
-                .sortedBy { it["appName"]?.lowercase() })
+            val loaded = apps.distinctBy { it["packageName"] }
+                .sortedBy { it["appName"]?.lowercase() }
+            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                result.success(loaded)
+            }
         } catch (e: Exception) {
-            result.error("GET_APPS_ERROR", e.message, null)
+            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                result.error("GET_APPS_ERROR", e.message, null)
+            }
         }
     }
 
@@ -243,10 +277,24 @@ class MainActivity : FlutterActivity() {
 
     // ── Blocking control ───────────────────────────────────────────────────────
 
+    private fun rejectActiveBlock(result: MethodChannel.Result): Boolean {
+        // Recompute from persisted schedule, not from Flutter state. This also
+        // protects sessions after process restart or an Accessibility reconnect.
+        BlockSchedule.refresh(this, false)
+        if (StrictBlockPolicy.isActive(BlockerAccessibilityService.isBlockingActive,
+                BlockerAccessibilityService.blockEndTimeMs, System.currentTimeMillis())) {
+            result.error("BLOCK_ACTIVE", "The active block cannot be changed before its end.",
+                BlockerAccessibilityService.blockEndTimeMs)
+            return true
+        }
+        return false
+    }
+
     /**
      * Starts a bounded session through the user-enabled Accessibility service.
      */
     private fun handleStartBlocking(call: MethodCall, result: MethodChannel.Result) {
+        if (rejectActiveBlock(result)) return
         try {
             val blockedPackages = call.argument<List<String>>("blockedPackages")?.filter { BlockSafety.allowed(this, it) }
             val durationMinutes = call.argument<Int>("durationMinutes")
@@ -277,6 +325,7 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun handleStopBlocking(result: MethodChannel.Result) {
+        if (rejectActiveBlock(result)) return
         try {
             // Stop accessibility-based blocking
             if (BlockerAccessibilityService.isBlockingActive) {
@@ -301,6 +350,7 @@ class MainActivity : FlutterActivity() {
      * Blocking starts at wakeHour:wakeMinute and lasts durationHours.
      */
     private fun handleScheduleBlocking(call: MethodCall, result: MethodChannel.Result) {
+        if (rejectActiveBlock(result)) return
         try {
             val blockedPackages = call.argument<List<String>>("blockedPackages")?.filter { BlockSafety.allowed(this, it) }
             val wakeHour = call.argument<Int>("wakeHour")
@@ -340,6 +390,7 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun handleCancelSchedule(result: MethodChannel.Result) {
+        if (rejectActiveBlock(result)) return
         try {
             val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
             prefs.edit().putBoolean("flutter.blocker_schedule_active", false).apply()

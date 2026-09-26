@@ -20,6 +20,13 @@ class InstalledApp {
 class AppBlockerNativeService {
   static const _channel = MethodChannel('com.degendetox.app/app_blocker');
 
+  Future<Map<String, dynamic>> getBlockState() async {
+    final result =
+        await _channel.invokeMapMethod<String, dynamic>('getBlockState');
+    if (result == null) throw StateError('Native block state unavailable');
+    return result;
+  }
+
   /// Returns a list of user-installed apps (excluding system and own app).
   Future<List<InstalledApp>> getInstalledApps() async {
     final List<dynamic> result =

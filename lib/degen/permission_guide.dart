@@ -12,12 +12,12 @@ String guideText(String key, String locale) {
 
 const guideWords = <String, List<String>>{
   'intro': [
-    'Enable Accessibility to detect selected apps and return to Home during your protected hours. This is a sensitive permission. Our blocker does not retrieve screen content, messages or passwords. You can turn it off at any time.',
-    'Įjunk pritaikymo neįgaliesiems tarnybą, kad atpažintume pasirinktas programėles ir apsaugos valandomis grąžintume į pagrindinį ekraną. Tai jautrus leidimas. Blokatorius neskaito ekrano turinio, žinučių ar slaptažodžių. Jį gali bet kada išjungti.',
-    'Activa Accesibilidad para detectar las apps elegidas y volver al inicio durante tus horas protegidas. Es un permiso sensible. El bloqueador no obtiene contenido de pantalla, mensajes ni contraseñas. Puedes desactivarlo cuando quieras.',
-    'Active l’accessibilité pour détecter les apps choisies et revenir à l’accueil pendant tes heures protégées. Cette autorisation est sensible. Le bloqueur ne lit ni écran, messages ou mots de passe. Tu peux le désactiver à tout moment.',
-    'Aktiviere die Bedienungshilfen, um ausgewählte Apps zu erkennen und während deiner Schutzzeiten zum Startbildschirm zurückzukehren. Diese Berechtigung ist sensibel. Der Blocker liest keine Bildschirminhalte, Nachrichten oder Passwörter. Du kannst ihn jederzeit ausschalten.',
-    '접근성을 켜면 선택한 앱을 감지하고 보호 시간에 홈 화면으로 돌아갑니다. 민감한 권한입니다. 차단기는 화면 내용, 메시지, 비밀번호를 읽지 않습니다. 언제든 끌 수 있습니다.',
+    'Enable Accessibility to detect selected apps and return to Home during protected hours. This is sensitive permission. Our blocker does not retrieve screen content, messages or passwords. Active blocks end automatically; Android permissions remain under your control.',
+    'Įjunk pritaikymo neįgaliesiems tarnybą, kad atpažintume pasirinktas programėles ir apsaugos valandomis grąžintume į pagrindinį ekraną. Tai jautrus leidimas. Blokatorius neskaito ekrano turinio, žinučių ar slaptažodžių. Aktyvus blokas baigiasi automatiškai; Android leidimų kontrolė lieka tavo rankose.',
+    'Activa Accesibilidad para detectar apps elegidas y volver al inicio durante horas protegidas. Es un permiso sensible. No obtenemos contenido de pantalla, mensajes ni contraseñas. El bloqueo activo termina automáticamente; controlas los permisos de Android.',
+    'Active l’accessibilité pour détecter les apps choisies et revenir à l’accueil aux heures protégées. Autorisation sensible : aucun écran, message ou mot de passe lu. Le blocage actif se termine automatiquement ; tu gardes le contrôle des autorisations Android.',
+    'Bedienungshilfen erkennen ausgewählte Apps und führen während der Schutzzeiten zum Startbildschirm. Sensible Berechtigung: keine Bildschirminhalte, Nachrichten oder Passwörter gelesen. Aktive Sperren enden automatisch; Android-Berechtigungen bleiben unter deiner Kontrolle.',
+    '접근성은 선택한 앱을 감지하고 보호 시간에 홈 화면으로 돌아갑니다. 민감한 권한이며 화면 내용, 메시지, 비밀번호를 읽지 않습니다. 활성 차단은 자동 종료되며 Android 권한은 사용자가 제어합니다.',
   ],
   'helpButton': [
     'Access denied or setting restricted?',
@@ -189,12 +189,12 @@ const guideWords = <String, List<String>>{
     '광고 SDK나 분석 추적기가 없습니다. 기록, 앱 선택, 일정은 기기에 저장됩니다. 기록은 로컬 설정이며 암호화된 의료 기록이 아닙니다. 결제 영수증은 보안 저장소에 저장합니다. 결제는 지갑에서 승인하며 여기에는 복구 구문을 입력하지 마세요. Solana 거래는 공개되며 RPC 제공자는 IP 주소와 조회한 지갑 정보가 포함된 네트워크 요청을 받습니다. 알림 권한은 미리 알림에만 사용합니다. 앱 삭제 시 로컬 데이터가 삭제되므로 복원을 위해 결제 서명을 보관하세요.',
   ],
   'philosophy': [
-    'Boundaries without shame. You choose the apps and hours; we help you keep that commitment. The blocker is a voluntary guardrail, not an unbreakable lock or treatment. Stop it in Settings at any time. Phone, system tools and supported wallets are excluded. You remain in control.',
-    'Ribos be gėdos. Tu pasirenki programėles ir laiką, mes padedame laikytis šio sprendimo. Blokavimas yra savanoriška pagalba, ne neįveikiamas užraktas ar gydymas. Nustatymuose jį gali bet kada sustabdyti. Telefonas, sistemos įrankiai ir palaikomos piniginės neblokuojami. Kontrolė lieka tavo rankose.',
-    'Límites sin vergüenza. Tú eliges apps y horarios; te ayudamos a mantener tu decisión. Es una barrera voluntaria, no un bloqueo invencible ni un tratamiento. Puedes detenerlo en Ajustes. Se excluyen el teléfono, herramientas del sistema y wallets compatibles. Tú mantienes el control.',
-    'Des limites sans culpabilité. Tu choisis apps et horaires ; nous t’aidons à respecter ce choix. C’est une aide volontaire, pas un verrou inviolable ni un traitement. Arrête-la à tout moment dans Réglages. Téléphone, outils système et portefeuilles pris en charge sont exclus. Tu gardes le contrôle.',
-    'Grenzen ohne Scham. Du wählst Apps und Zeiten; wir unterstützen deine Entscheidung. Freiwillige Unterstützung, keine unüberwindbare Sperre oder Behandlung. In Einstellungen jederzeit stoppen. Telefon, Systemwerkzeuge und unterstützte Wallets bleiben frei. Du behältst die Kontrolle.',
-    '자책 대신 경계 설정. 앱과 시간을 직접 선택하면 그 결정을 지키도록 돕습니다. 차단은 자발적인 보조 수단이며 완벽한 잠금이나 치료가 아닙니다. 설정에서 언제든 중지할 수 있습니다. 전화, 시스템 도구, 지원 지갑은 제외됩니다. 통제권은 사용자에게 있습니다.',
+    'You choose your apps and hours before enabling the schedule. Once active, the block cannot be stopped, shortened or edited in this app until it ends automatically. This is voluntary support, not treatment or an unbreakable system lock. Phone, system tools and supported wallets remain available.',
+    'Programėles ir laiką pasirenki prieš įjungdamas grafiką. Prasidėjus blokui, šioje programėlėje jo negalėsi sustabdyti, sutrumpinti ar pakeisti iki automatinės pabaigos. Tai savanoriška pagalba, ne gydymas ar neapeinamas sistemos užraktas. Telefonas, sistemos įrankiai ir palaikomos piniginės lieka pasiekiami.',
+    'Eliges apps y horas antes de activar el horario. Una vez activo, no puedes detener, acortar ni editar el bloqueo en esta app hasta su fin automático. Es apoyo voluntario, no tratamiento ni bloqueo del sistema inviolable. Teléfono, herramientas del sistema y wallets compatibles siguen disponibles.',
+    'Tu choisis apps et heures avant l’activation. Le blocage actif ne peut être arrêté, raccourci ou modifié dans cette app avant sa fin automatique. Aide volontaire, ni traitement ni verrou système inviolable. Téléphone, outils système et portefeuilles compatibles restent accessibles.',
+    'Apps und Zeiten wählst du vor der Aktivierung. Eine aktive Sperre lässt sich in dieser App bis zum automatischen Ende nicht stoppen, verkürzen oder ändern. Freiwillige Hilfe, keine Behandlung oder unüberwindbare Systemsperre. Telefon, Systemwerkzeuge und unterstützte Wallets bleiben erreichbar.',
+    '일정 활성화 전에 앱과 시간을 선택하세요. 차단이 시작되면 자동 종료까지 이 앱에서 중지, 단축, 변경할 수 없습니다. 자발적 도움이며 치료나 우회 불가능한 시스템 잠금은 아닙니다. 전화, 시스템 도구, 지원 지갑은 계속 사용할 수 있습니다.',
   ],
 };
 
