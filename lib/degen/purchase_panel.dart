@@ -107,11 +107,18 @@ class _PurchasePanelState extends State<PurchasePanel> {
             child: Text(t(qaBuild ? 'qaBanner' : 'androidPayment'))),
       const SizedBox(height: 22),
       if (receipt != null) ...[
+        const Icon(Icons.check_circle_outline, size: 42, color: champagne),
+        const SizedBox(height: 12),
         Text(
             '${t('owned')} · ${receipt.tier == AccessTier.skr ? 'SKR + Touch Grass' : 'SOL'}',
             style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold)),
+        const SizedBox(height: 16),
+        FilledButton.icon(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_forward),
+            label: Text(t('continueInApp'))),
         const SizedBox(height: 12),
         SelectableText(receipt.wallet, style: const TextStyle(fontSize: 12)),
         const SizedBox(height: 12),

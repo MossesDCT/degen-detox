@@ -1,6 +1,7 @@
 package com.degendetox.app
 
 import android.app.AlarmManager
+import android.app.ActivityManager
 import android.app.AppOpsManager
 import android.app.PendingIntent
 import android.content.Context
@@ -51,6 +52,27 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channelName)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
+                    "returnFromWallet" -> {
+                        // Only requested after this app's user-initiated wallet
+                        // session ends. Reuse the existing task/Flutter activity;
+                        // never finish it, clear its stack, or start a new task.
+                        try {
+                            if (!isFinishing && !isDestroyed && !hasWindowFocus()) {
+                                val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                                val ownTask = manager.appTasks.firstOrNull {
+                                    it.taskInfo.taskId == taskId
+                                }
+                                ownTask?.moveToFront()
+                                startActivity(Intent(this, MainActivity::class.java).addFlags(
+                                    Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
+                                        Intent.FLAG_ACTIVITY_SINGLE_TOP))
+                            }
+                            result.success(true)
+                        } catch (e: Exception) {
+                            // Focus recovery must never invalidate a signed payment.
+                            result.error("WALLET_RETURN", e.message, null)
+                        }
+                    }
                     "getInstalledApps" -> handleGetInstalledApps(result)
                     "checkPermissions" -> handleCheckPermissions(result)
                     "requestAccessibilityPermission" -> handleRequestAccessibility(result)

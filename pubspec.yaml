@@ -1,7 +1,7 @@
 name: degen_detox
 description: A mobile-first digital wellbeing app for the crypto community.
 publish_to: 'none'
-version: 0.4.0+4
+version: 0.5.0+5
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -27,6 +27,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+
+dependency_overrides:
+  # 0.1.2 with Android activity-result and orderly disconnect fixes.
+  solana_mobile_client:
+    path: vendor/solana_mobile_client
 
 flutter:
   uses-material-design: true

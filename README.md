@@ -1,6 +1,6 @@
 # Degen Detox
 
-Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.4 rotates the SOL/SKR payment recipient at the owner's request, reduces promotional copy to one home slogan, and orders Today and Rituals as Free → Pro → SKR. The v0.3 forest/gold design, education, permission guide and real Mobile Wallet Adapter checkout are retained.
+Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.5 fixes wallet-return lifecycle handling while retaining v0.4's recipient, one home slogan and Free → Pro → SKR ordering. The owner confirmed a successful real v0.4 payment unlocked Pro; the subsequent app-exit report prompted this lifecycle patch.
 
 This is a device-test release candidate. Automated tests and compilation do not establish that Seeker wallet interaction, background alarms and Accessibility behave correctly on the user's specific device.
 
@@ -52,7 +52,9 @@ There is no deployed centralized licensing server. Verification trusts the confi
 
 ## Before public release
 
-Complete `INSTALL_v0.4_LT.md` and the detailed cases in `TESTING.md` on a physical Solana Seeker. In particular verify wallet cancellation, successful SOL and SKR checkout with separate payer wallets, pending-payment recovery, reinstall/restore, permission denial, overnight blocking and background reminders. No real wallet transaction was made by the build agent. The automated suite currently contains 47 passing tests; static analysis of active code reports no issues. Older installation documents and APKs are obsolete for payment testing: use v0.4 with the new recipient. This delivery is the real-payment production flavor, not a free-unlocked QA build.
+Complete `INSTALL_v0.5_LT.md` and the detailed cases in `TESTING.md` on a physical Solana Seeker. In particular verify wallet return and cancellation, SOL and SKR checkout, pending-payment recovery, restore, permission denial, overnight blocking and background reminders. No real wallet transaction was made by the build agent. The automated suite contains 63 passing tests; static analysis of active code reports no issues. Use Restore with the existing paying wallet to exercise the shared return path without paying again. The same package, signing certificate and receipt keys preserve locally saved Pro access.
+
+The `vendor/solana_mobile_client` override preserves upstream 0.1.2 APIs and license, with a narrow Android lifecycle patch documented in `DEGEN_PATCH.md`. The patched dependency must be included with the source project.
 
 Production signing, native-speaker translation review, legal/contact details and hackathon eligibility confirmation remain release requirements. See `PROVENANCE.md`; this is a disclosed derivative, not a claim that all code was newly authored for a hackathon.
 

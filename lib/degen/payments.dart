@@ -10,6 +10,7 @@ import 'package:solana/encoder.dart';
 import 'package:solana/solana.dart';
 import 'package:solana_mobile_client/solana_mobile_client.dart';
 import 'domain.dart';
+import 'wallet_handoff.dart';
 
 const qaBuild = bool.fromEnvironment('DEGEN_QA');
 const merchant = '6vqJTwDWoNXauztA3e8psbnrm4bNWFDAG218NbAMPgaG';
@@ -193,16 +194,24 @@ class PaymentService {
       throw const PaymentFailure('noWallet');
     }
     final session = await LocalAssociationScenario.create();
+    var walletReturned = Future<bool>.value(false);
+    var operationCompleted = false;
     try {
-      unawaited(session.startActivityForResult(null).catchError((_) {}));
+      walletReturned =
+          observeWalletReturn(session.startActivityForResult(null));
       final client = await session.start().timeout(const Duration(seconds: 45));
       final auth = await client
           .authorize(identityName: 'Degen Detox', cluster: 'mainnet-beta')
           .timeout(const Duration(seconds: 90));
       if (auth == null) throw const PaymentFailure('walletCancelled');
-      return await body(client, Ed25519HDPublicKey(auth.publicKey));
+      final value = await body(client, Ed25519HDPublicKey(auth.publicKey));
+      operationCompleted = true;
+      return value;
     } finally {
-      await session.close();
+      await finishWalletHandoff(
+          close: session.close,
+          walletReturned: walletReturned,
+          operationCompleted: operationCompleted);
     }
   }
 

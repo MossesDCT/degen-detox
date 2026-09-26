@@ -1,4 +1,12 @@
 const purchaseWords = <String, List<String>>{
+  'continueInApp': [
+    'Continue in Degen Detox',
+    'Tęsti Degen Detox',
+    'Continuar en Degen Detox',
+    'Continuer dans Degen Detox',
+    'Weiter in Degen Detox',
+    'Degen Detox에서 계속하기'
+  ],
   'privacyNative': [
     'Check-ins and settings stay on this phone; notes are not encrypted. Purchase receipts use Android-backed secure storage. Wallet payments are public on Solana and verified through an HTTPS RPC provider, which receives your IP and requested wallet/transaction data. We do not collect analytics, seed phrases or private keys. Accessibility reads the opened app name only, not screen content. Degen Detox does not measure hormones or diagnose addiction.',
     'Savistaba ir nustatymai lieka telefone; pastabos nešifruojamos. Pirkimo kvitai saugomi saugioje Android saugykloje. Mokėjimai vieši Solana tinkle ir tikrinami per HTTPS RPC paslaugą, kuri gauna tavo IP bei užklausose pateiktus piniginės ir operacijos duomenis. Nerenkame analitikos, atkūrimo frazių ar privačių raktų. Pritaikymo neįgaliesiems funkcija mato tik atidaromos programėlės pavadinimą, ne ekrano turinį. Degen Detox nematuoja hormonų ir nediagnozuoja priklausomybės.',

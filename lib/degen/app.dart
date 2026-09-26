@@ -370,7 +370,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         const Spacer(),
                         label('SOLANA MOBILE'),
                         const SizedBox(height: 10),
-                        Text('Degen Detox · v0.4',
+                        Text('Degen Detox · v0.5',
                             style: TextStyle(color: subtle, fontSize: 12)),
                       ])),
             Expanded(
@@ -724,7 +724,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.4 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+        Text('v0.5 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
             style: TextStyle(color: subtle)),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),
