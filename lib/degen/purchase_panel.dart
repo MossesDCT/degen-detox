@@ -5,6 +5,7 @@ import 'domain.dart';
 import 'payments.dart';
 import 'strings.dart';
 import 'luxury.dart';
+import 'upgrade_strings.dart';
 
 class PurchasePanel extends StatefulWidget {
   const PurchasePanel(
@@ -66,6 +67,11 @@ class _PurchasePanelState extends State<PurchasePanel> {
                           style: Theme.of(context).textTheme.headlineMedium),
                       const SizedBox(height: 12),
                       Text(t('noSubscription')),
+                      if (widget.service.receipt?.tier == AccessTier.sol &&
+                          tier == AccessTier.skr) ...[
+                        const SizedBox(height: 12),
+                        Text(upgradeText('body', widget.locale)),
+                      ],
                       const SizedBox(height: 16),
                       Text(t('fees')),
                       const SizedBox(height: 16),
@@ -128,6 +134,33 @@ class _PurchasePanelState extends State<PurchasePanel> {
                 Clipboard.setData(ClipboardData(text: receipt.signature)),
             icon: const Icon(Icons.copy),
             label: Text(t('receiptInput'))),
+        if (receipt.tier == AccessTier.sol) ...[
+          const SizedBox(height: 20),
+          LuxuryPanel(
+              pro: true,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GoldText(upgradeText('title', widget.locale),
+                        style: const TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 12),
+                    Text(upgradeText('body', widget.locale),
+                        style: const TextStyle(height: 1.6)),
+                    const SizedBox(height: 12),
+                    Text(upgradeText('kept', widget.locale),
+                        style: const TextStyle(fontSize: 13, height: 1.6)),
+                    const SizedBox(height: 18),
+                    FilledButton(
+                        onPressed: !busy &&
+                                nativePayments &&
+                                widget.service.pending == null
+                            ? () => buy(AccessTier.skr)
+                            : null,
+                        child: Text(upgradeText('buy', widget.locale))),
+                  ])),
+          const SizedBox(height: 20),
+        ],
       ] else
         for (final tier in [AccessTier.sol, AccessTier.skr])
           Container(

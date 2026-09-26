@@ -1,6 +1,8 @@
 # Degen Detox
 
-Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.7 opens Morning Shield without an installed-app scan, adds strict active-block editing guards and direct numeric wake input. A compile-gated manual local-Pro reset is available only in the owner-test APK for the requested SKR checkout test. The owner confirmed the v0.6 timed blocker notice works on Seeker. Wallet-return fixes, recipient and existing visual design are retained.
+Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.8 adds a later 500 SKR upgrade for SOL Pro owners, free local urge insights, explicit preinstalled Google consumer-app selection and a framed forest Today screen. The owner confirmed a real SKR checkout worked on Seeker before this release. The new SOL-to-SKR upgrade is covered by automated tests but still needs device acceptance. Strict blocking, numeric wake input and wallet-return fixes are retained.
+
+The delivered v0.8 APK uses normal production flags, without owner reset tools. Existing purchases, check-ins and block settings are preserved; there is no entitlement reset migration.
 
 This is a device-test release candidate. Automated tests and compilation do not establish that Seeker wallet interaction, background alarms and Accessibility behave correctly on the user's specific device.
 
@@ -8,6 +10,7 @@ This is a device-test release candidate. Automated tests and compilation do not 
 
 - 0.1 SOL: lifetime Pro, morning blocking, 20 recipes and Trading Wind-down.
 - 500 SKR: the same lifetime Pro plus Touch Grass.
+- Existing SOL Pro owners can separately pay the full 500 SKR later to add Touch Grass. Their prior SOL payment is not credited or refunded. SOL access stays active on cancellation, failure or pending confirmation; existing SKR owners are not offered another upgrade.
 - No subscriptions or monthly app payments. Solana fees are separate.
 - Payment recipient: `6vqJTwDWoNXauztA3e8psbnrm4bNWFDAG218NbAMPgaG`.
 - Mainnet SKR mint: `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`, six decimals, standard SPL Token program. Official mint reference: [Solana Mobile](https://solanamobile.com/skr).

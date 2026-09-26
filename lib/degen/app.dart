@@ -20,6 +20,8 @@ import 'reminders.dart';
 import 'strings.dart';
 import 'payments.dart';
 import 'purchase_panel.dart';
+import 'home_intro.dart';
+import 'impulse_insights.dart';
 
 const pine = Color(0xff0b1712),
     leaf = Color(0xffc4eb87),
@@ -385,7 +387,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         const Spacer(),
                         label('SOLANA MOBILE'),
                         const SizedBox(height: 10),
-                        Text('Degen Detox · v0.7',
+                        Text('Degen Detox · v0.8',
                             style: TextStyle(color: subtle, fontSize: 12)),
                       ])),
             Expanded(
@@ -468,36 +470,33 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
       ]);
   Widget home() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
-          padding: const EdgeInsets.only(top: 8, bottom: 24),
-          child: Text(t('headline'),
-              style: const TextStyle(
-                  fontSize: 24,
-                  height: 1.4,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -.4))),
+      HomeIntro(slogan: t('headline')),
       label(t('free')),
-      rowTile(Icons.air, t('breathe'), t('breatheDesc'), breathing,
-          badge: t('free')),
-      Divider(color: subtle.withValues(alpha: .15)),
-      rowTile(
-          Icons.psychology_outlined, t('impulse'), t('impulseDesc'), impulse,
-          badge: t('free')),
-      rowTile(Icons.menu_book_outlined, t('learn'), t('learnIntro'),
-          () => selectTab(2),
-          badge: t('free')),
+      HomeAction(icon: Icons.air, title: t('breathe'), onTap: breathing),
+      HomeAction(
+          icon: Icons.psychology_outlined, title: t('impulse'), onTap: impulse),
+      HomeAction(
+          icon: Icons.menu_book_outlined,
+          title: t('learn'),
+          onTap: () => selectTab(2)),
       const SizedBox(height: 24),
       box(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         label(t('checkins')),
         const SizedBox(height: 12),
-        Text(entries.isEmpty ? t('empty') : '${entries.length}',
+        Text(
+            entries.isEmpty
+                ? t('empty')
+                : '${UrgeInsights(entries).records.length}',
             style: TextStyle(
                 fontSize: entries.isEmpty ? 14 : 32,
                 color: entries.isEmpty ? subtle : null)),
-        if (entries.isNotEmpty)
-          Text(
-              '${entries.last['urge']}/10 · ${entries.last['date'].toString().substring(0, 10)}',
-              style: TextStyle(color: subtle)),
+        Text(insightText('window', widget.locale),
+            style: TextStyle(fontSize: 12, color: subtle)),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+            onPressed: insights,
+            icon: const Icon(Icons.insights),
+            label: Text(insightText('title', widget.locale))),
       ])),
       const SizedBox(height: 32),
       const GoldText('PRO',
@@ -745,7 +744,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.7 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+        Text('v0.8 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
             style: TextStyle(color: subtle)),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),
@@ -894,6 +893,9 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> insights() => sheet(insightText('title', widget.locale),
+      ImpulseInsightsPanel(entries: entries, locale: widget.locale));
+
   Future<void> impulse() async {
     var urge = 5.0;
     final note = TextEditingController();
@@ -903,6 +905,8 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
         StatefulBuilder(
             builder: (c, refresh) =>
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(insightText('purpose', widget.locale)),
+                  const SizedBox(height: 20),
                   Text(t('urge'),
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.w600)),
@@ -935,8 +939,12 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                       onPressed: saved
                           ? null
                           : () async {
+                              final now = DateTime.now();
                               setState(() => entries.add({
-                                    'date': DateTime.now().toIso8601String(),
+                                    'date': now.toIso8601String(),
+                                    'hourLocal': now.hour,
+                                    'utcOffsetMinutes':
+                                        now.timeZoneOffset.inMinutes,
                                     'urge': urge.round(),
                                     'note': note.text.trim()
                                   }));
@@ -949,6 +957,16 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         padding: const EdgeInsets.only(top: 20),
                         child: Text(t('logged'),
                             style: TextStyle(color: accent, height: 1.6))),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(c);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) insights();
+                        });
+                      },
+                      icon: const Icon(Icons.insights),
+                      label: Text(insightText('title', widget.locale))),
                 ])));
     // Sheet closing animation may still hold the controller for a frame.
   }

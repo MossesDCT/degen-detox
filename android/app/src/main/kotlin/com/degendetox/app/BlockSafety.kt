@@ -15,7 +15,8 @@ object BlockSafety {
                 .any { p.contains(it) }) return false
         return try {
             val info = knownInfo ?: context.packageManager.getApplicationInfo(pkg, 0)
-            if ((info.flags and ApplicationInfo.FLAG_SYSTEM) != 0) return false
+            if ((info.flags and ApplicationInfo.FLAG_SYSTEM) != 0 &&
+                !ConsumerAppPolicy.allowSystemPackage(pkg)) return false
             if (knownHomes != null) return pkg !in knownHomes
             val homes = context.packageManager.queryIntentActivities(
                 Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0)

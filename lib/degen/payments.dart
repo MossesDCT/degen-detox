@@ -52,6 +52,12 @@ class PurchaseReceipt {
   }
 }
 
+bool canPurchaseTier(AccessTier? current, AccessTier requested) =>
+    requested != AccessTier.free &&
+    (current == null ||
+        current == AccessTier.free ||
+        (current == AccessTier.sol && requested == AccessTier.skr));
+
 /// Pure verifier for finalized jsonParsed RPC transaction data.
 /// Only exact-price, app-tagged transfers from the authenticated wallet count.
 AccessTier verifyPayment(Map<String, dynamic> tx, String wallet,
@@ -273,20 +279,28 @@ class PaymentService {
     return PurchaseReceipt(wallet, signature, tier);
   }
 
-  Future<void> _save(PurchaseReceipt value) async {
+  /// Caller must first verify finalized on-chain evidence. Public only for
+  /// persistence regression tests; no UI or native method-channel exposes this.
+  @visibleForTesting
+  Future<void> persistVerifiedReceipt(PurchaseReceipt value) async {
     // A SOL restore must never downgrade an existing SKR receipt.
     if (receipt?.tier == AccessTier.skr && value.tier == AccessTier.sol) return;
     await _storage.write(key: _receiptKey, value: jsonEncode(value.toJson()));
     receipt = value;
-    await _storage.delete(key: _pendingKey);
-    pending = null;
+    // Restoring an older SOL receipt must not discard a pending SKR upgrade.
+    if (pending == null || pending!['signature'] == value.signature) {
+      await _storage.delete(key: _pendingKey);
+      pending = null;
+    }
   }
 
   Future<PurchaseReceipt> buy(AccessTier tier) async {
     if (_busy) throw const PaymentFailure('busyPayment');
     if (tier == AccessTier.free) throw const PaymentFailure('invalidReceipt');
     if (pending != null) throw const PaymentFailure('pendingPayment');
-    if (receipt != null) throw const PaymentFailure('alreadyOwned');
+    if (!canPurchaseTier(receipt?.tier, tier)) {
+      throw const PaymentFailure('alreadyOwned');
+    }
     _busy = true;
     try {
       await _checkNetwork();
@@ -393,7 +407,7 @@ class PaymentService {
       for (var i = 0; i < 24; i++) {
         try {
           final value = await _checkReceipt(info.signature, info.wallet);
-          await _save(value);
+          await persistVerifiedReceipt(value);
           return value;
         } on PaymentFailure catch (e) {
           if (e.code != 'pendingPayment') rethrow;
@@ -409,7 +423,8 @@ class PaymentService {
     }
   }
 
-  Future<String> _proveWallet() => _wallet((client, payer) async {
+  @protected
+  Future<String> proveWalletOwnership() => _wallet((client, payer) async {
         final nonce = base64UrlEncode(
             List.generate(32, (_) => Random.secure().nextInt(256)));
         final message = Uint8List.fromList(utf8.encode(
@@ -439,20 +454,20 @@ class PaymentService {
     _busy = true;
     try {
       await _checkNetwork();
-      final wallet = await _proveWallet();
+      final wallet = await proveWalletOwnership();
       final explicit = signature?.trim();
       if (explicit != null && explicit.isNotEmpty) {
         if (base58.decode(explicit).length != 64) {
           throw const PaymentFailure('invalidReceipt');
         }
         final value = await _checkReceipt(explicit, wallet);
-        await _save(value);
+        await persistVerifiedReceipt(value);
         return value;
       }
       if (pending?['wallet'] == wallet) {
         try {
           final value = await _checkReceipt(pending!['signature'], wallet);
-          await _save(value);
+          await persistVerifiedReceipt(value);
           return value;
         } on PaymentFailure catch (e) {
           if (e.code != 'pendingPayment' && e.code != 'paymentFailed') rethrow;
@@ -474,13 +489,18 @@ class PaymentService {
           throw const PaymentFailure('pendingPayment');
         }
       }
+      PurchaseReceipt? best;
       if (receipt?.wallet == wallet) {
         final value = await _checkReceipt(receipt!.signature, wallet);
-        await _save(value);
-        return value;
+        if (value.tier == AccessTier.skr) {
+          await persistVerifiedReceipt(value);
+          return value;
+        }
+        // Cached SOL proves base Pro, but is not evidence that no later SKR
+        // purchase exists. Search history before settling for the base tier.
+        best = value;
       }
       String? before;
-      PurchaseReceipt? best;
       // Bounded scan; receipt import covers very active/old wallets without paying again.
       for (var page = 0; page < 10; page++) {
         final history = await rpc('getSignaturesForAddress', [
@@ -508,7 +528,7 @@ class PaymentService {
         before = history.last['signature'] as String;
       }
       if (best == null) throw const PaymentFailure('receiptNotFound');
-      await _save(best);
+      await persistVerifiedReceipt(best);
       return best;
     } on TimeoutException {
       throw const PaymentFailure('networkError');
