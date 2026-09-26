@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'luxury.dart';
 import 'education.dart';
 import 'permission_guide.dart';
+import 'blocker_apps.dart';
 import '../features/pro/app_blocker/data/app_blocker_service.dart';
 import '../features/breathing/data/datasources/breathing_local_datasource.dart';
 import '../features/breathing/domain/entities/breathing_technique.dart';
@@ -136,6 +137,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   List<Map<String, dynamic>> entries = [];
   List<InstalledApp> apps = [];
   Set<String> selected = {};
+  Map<String, String> selectedNames = {};
   String? status;
   bool grassEnabled = false;
   final native = AppBlockerNativeService();
@@ -175,6 +177,12 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               hour: (p.getInt('degen_wake_h') ?? 8).clamp(0, 23),
               minute: (p.getInt('degen_wake_m') ?? 0).clamp(0, 59));
           selected = (p.getStringList('degen_apps') ?? []).toSet();
+          try {
+            selectedNames = Map<String, String>.from(
+                jsonDecode(p.getString('degen_app_names') ?? '{}') as Map);
+          } catch (_) {
+            selectedNames = {};
+          }
         });
       }
     } catch (_) {/* Invalid saved data never blocks the app. */}
@@ -220,6 +228,12 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
     await p.setInt('degen_wake_h', wake.hour);
     await p.setInt('degen_wake_m', wake.minute);
     await p.setStringList('degen_apps', selected.toList());
+    await p.setString(
+        'degen_app_names',
+        jsonEncode({
+          for (final id in selected)
+            if (selectedNames[id] != null) id: selectedNames[id],
+        }));
   }
 
   Future<void> sheet(String title, Widget child) async {
@@ -370,7 +384,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         const Spacer(),
                         label('SOLANA MOBILE'),
                         const SizedBox(height: 10),
-                        Text('Degen Detox · v0.5',
+                        Text('Degen Detox · v0.6',
                             style: TextStyle(color: subtle, fontSize: 12)),
                       ])),
             Expanded(
@@ -724,7 +738,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.5 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+        Text('v0.6 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
             style: TextStyle(color: subtle)),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),
@@ -773,6 +787,17 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
       return;
     }
     status = null;
+    try {
+      apps = await installedCandidates();
+      for (final a in apps) {
+        if (selected.contains(a.packageName)) {
+          selectedNames[a.packageName] = a.appName;
+        }
+      }
+    } catch (_) {
+      /* Saved names still identify selections while native lookup fails. */
+    }
+    if (!mounted) return;
     await sheet(
         t('morning'),
         StatefulBuilder(
@@ -826,6 +851,16 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                       },
                       icon: const Icon(Icons.apps),
                       label: Text('${t('selectApps')} · ${selected.length}')),
+                  const SizedBox(height: 16),
+                  SelectedAppsSummary(
+                      locale: widget.locale,
+                      selected: selected,
+                      apps: apps,
+                      savedNames: selectedNames),
+                  const SizedBox(height: 12),
+                  Text(blockerText('apply', widget.locale),
+                      style:
+                          TextStyle(color: subtle, fontSize: 12, height: 1.6)),
                   const SizedBox(height: 20),
                   FilledButton(
                       onPressed: () async {
@@ -886,16 +921,12 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
   Future<void> permissions() => sheet(
       t('permissions'), PermissionGuide(locale: widget.locale, native: native));
 
-  Future<void> chooseApps() async {
+  Future<List<InstalledApp>> installedCandidates() async {
     if (!kIsWeb) {
-      try {
-        apps = await native.getInstalledApps();
-      } catch (_) {
-        apps = [];
-      }
+      return native.getInstalledApps();
     } else {
       // Explicit preview candidates, not a claim to have scanned a browser.
-      apps = const [
+      return const [
         InstalledApp(packageName: 'com.binance.dev', appName: 'Binance'),
         InstalledApp(
             packageName: 'com.tradingview.tradingviewapp',
@@ -906,31 +937,27 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
         InstalledApp(packageName: 'com.discord', appName: 'Discord')
       ];
     }
+  }
+
+  Future<void> chooseApps() async {
     if (!mounted) return;
     await sheet(
         t('apps'),
-        StatefulBuilder(
-            builder: (c, refresh) => Column(children: [
-                  Text(t('androidOnly'),
-                      style:
-                          TextStyle(color: subtle, fontSize: 12, height: 1.6)),
-                  for (final a in apps)
-                    CheckboxListTile(
-                        value: selected.contains(a.packageName),
-                        title: Text(a.appName),
-                        onChanged: (v) {
-                          setState(() {
-                            v == true
-                                ? selected.add(a.packageName)
-                                : selected.remove(a.packageName);
-                          });
-                          refresh(() {});
-                        }),
-                  const SizedBox(height: 16),
-                  FilledButton(
-                      onPressed: () => Navigator.pop(c),
-                      child: Text(t('save'))),
-                ])));
+        BlockerAppPicker(
+            locale: widget.locale,
+            initialSelected: selected,
+            loadApps: installedCandidates,
+            onSave: (selection, candidates) async {
+              setState(() {
+                selected = selection;
+                apps = candidates;
+                for (final a in candidates) {
+                  selectedNames[a.packageName] = a.appName;
+                }
+              });
+              Navigator.pop(context);
+              await persist();
+            }));
   }
 
   Future<void> impulse() async {

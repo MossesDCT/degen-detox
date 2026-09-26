@@ -11,6 +11,87 @@ String guideText(String key, String locale) {
 }
 
 const guideWords = <String, List<String>>{
+  'intro': [
+    'Enable Accessibility to detect selected apps and return to Home during your protected hours. This is a sensitive permission. Our blocker does not retrieve screen content, messages or passwords. You can turn it off at any time.',
+    'Įjunk pritaikymo neįgaliesiems tarnybą, kad atpažintume pasirinktas programėles ir apsaugos valandomis grąžintume į pagrindinį ekraną. Tai jautrus leidimas. Blokatorius neskaito ekrano turinio, žinučių ar slaptažodžių. Jį gali bet kada išjungti.',
+    'Activa Accesibilidad para detectar las apps elegidas y volver al inicio durante tus horas protegidas. Es un permiso sensible. El bloqueador no obtiene contenido de pantalla, mensajes ni contraseñas. Puedes desactivarlo cuando quieras.',
+    'Active l’accessibilité pour détecter les apps choisies et revenir à l’accueil pendant tes heures protégées. Cette autorisation est sensible. Le bloqueur ne lit ni écran, messages ou mots de passe. Tu peux le désactiver à tout moment.',
+    'Aktiviere die Bedienungshilfen, um ausgewählte Apps zu erkennen und während deiner Schutzzeiten zum Startbildschirm zurückzukehren. Diese Berechtigung ist sensibel. Der Blocker liest keine Bildschirminhalte, Nachrichten oder Passwörter. Du kannst ihn jederzeit ausschalten.',
+    '접근성을 켜면 선택한 앱을 감지하고 보호 시간에 홈 화면으로 돌아갑니다. 민감한 권한입니다. 차단기는 화면 내용, 메시지, 비밀번호를 읽지 않습니다. 언제든 끌 수 있습니다.',
+  ],
+  'helpButton': [
+    'Access denied or setting restricted?',
+    'Rodo „Prieiga nesuteikta“ ar apribojimą?',
+    '¿Acceso denegado o ajuste restringido?',
+    'Accès refusé ou paramètre restreint ?',
+    'Zugriff verweigert oder Einstellung eingeschränkt?',
+    '액세스가 거부되거나 설정이 제한되나요?'
+  ],
+  'stepInfo': [
+    'Allow the Android setting',
+    'Leisk Android nustatymą',
+    'Permite el ajuste de Android',
+    'Autorise le réglage Android',
+    'Android-Einstellung zulassen',
+    'Android 설정 허용'
+  ],
+  'stepEnable': [
+    'Now enable the blocker',
+    'Dabar įjunk blokatorių',
+    'Ahora activa el bloqueador',
+    'Active maintenant le bloqueur',
+    'Jetzt den Blocker aktivieren',
+    '이제 차단기 켜기'
+  ],
+  'findMenu': [
+    'The button opens Degen Detox’s App info directly. Find ⋮ in the top-right corner.',
+    'Mygtukas atvers būtent Degen Detox programos informaciją. Viršutiniame dešiniajame kampe surask ⋮.',
+    'El botón abre directamente la información de Degen Detox. Busca ⋮ arriba a la derecha.',
+    'Le bouton ouvre directement les infos de Degen Detox. Repère ⋮ en haut à droite.',
+    'Die Schaltfläche öffnet direkt die App-Info von Degen Detox. Suche oben rechts nach ⋮.',
+    '버튼을 누르면 Degen Detox 앱 정보가 바로 열립니다. 오른쪽 위의 ⋮를 찾으세요.',
+  ],
+  'allowMenu': [
+    'Tap “Allow restricted settings”, if offered, and confirm your device lock.',
+    'Paspausk „Leisti apribotus nustatymus“, jei toks punktas yra, ir patvirtink telefono atrakinimu.',
+    'Pulsa “Permitir ajustes restringidos”, si aparece, y confirma el bloqueo del teléfono.',
+    'Choisis « Autoriser les paramètres restreints », si proposé, et confirme le verrouillage.',
+    'Tippe auf „Eingeschränkte Einstellungen zulassen“, falls angeboten, und bestätige die Gerätesperre.',
+    '표시되는 경우 “제한된 설정 허용”을 누르고 기기 잠금을 확인하세요.',
+  ],
+  'returnStep': [
+    'Return here using Android Back. Then open the blocker settings and enable Degen Detox.',
+    'Telefono mygtuku „Atgal“ grįžk čia. Tada atverk blokatoriaus nustatymus ir įjunk Degen Detox.',
+    'Vuelve aquí con Atrás. Después abre los ajustes del bloqueador y activa Degen Detox.',
+    'Reviens ici avec Retour, puis ouvre les réglages du bloqueur et active Degen Detox.',
+    'Kehre mit Zurück hierher zurück. Öffne dann die Blocker-Einstellungen und aktiviere Degen Detox.',
+    '뒤로 버튼으로 돌아오세요. 차단기 설정을 열고 Degen Detox를 켜세요.',
+  ],
+  'enableHint': [
+    'Turn on Degen Detox in the next screen and confirm Android’s message. If a list opens, choose Degen Detox. Return here; we check automatically.',
+    'Kitame ekrane įjunk Degen Detox ir patvirtink Android pranešimą. Jei atsivers sąrašas, pasirink Degen Detox. Grįžus leidimą patikrinsime automatiškai.',
+    'Activa Degen Detox y confirma el aviso de Android. Si aparece una lista, elige Degen Detox. Al volver lo comprobaremos automáticamente.',
+    'Active Degen Detox et confirme le message Android. Si une liste s’ouvre, choisis Degen Detox. Nous vérifierons automatiquement à ton retour.',
+    'Aktiviere Degen Detox und bestätige den Android-Hinweis. Falls eine Liste erscheint, wähle Degen Detox. Bei deiner Rückkehr prüfen wir automatisch.',
+    '다음 화면에서 Degen Detox를 켜고 Android 안내를 확인하세요. 목록이 열리면 Degen Detox를 선택하세요. 돌아오면 자동으로 확인합니다.',
+  ],
+  'safeHelp': [
+    'Only continue if you trust this app. If the option is missing, consult the Android guide below. Do not disable Play Protect or bypass device policy.',
+    'Tęsk tik jei pasitiki šia programėle. Jei tokio punkto nėra, žr. Android pagalbą žemiau. Neišjunk Play Protect ir neapeik įrenginio politikos.',
+    'Continúa solo si confías en la app. Si falta la opción, consulta la guía Android. No desactives Play Protect ni eludas políticas.',
+    'Continue uniquement si tu fais confiance à l’app. Si l’option manque, consulte le guide Android. Ne désactive pas Play Protect et ne contourne pas les règles.',
+    'Nur fortfahren, wenn du der App vertraust. Fehlt die Option, nutze die Android-Hilfe. Play Protect nicht deaktivieren und keine Richtlinien umgehen.',
+    '앱을 신뢰할 때만 진행하세요. 옵션이 없으면 아래 Android 도움말을 확인하세요. Play Protect를 끄거나 기기 정책을 우회하지 마세요.',
+  ],
+  'details': [
+    'How it works and your control',
+    'Kaip veikia ir ką valdai tu',
+    'Cómo funciona y tu control',
+    'Fonctionnement et ton contrôle',
+    'Funktionsweise und deine Kontrolle',
+    '작동 방식과 사용자 제어'
+  ],
+  'done': ['Done', 'Baigta', 'Listo', 'Terminé', 'Fertig', '완료'],
   'purposeShort': [
     'Check Android protection before purchasing Pro.',
     'Patikrink Android leidimus prieš įsigydamas Pro.',
@@ -44,20 +125,20 @@ const guideWords = <String, List<String>>{
     '목적을 이해했으며 Android 접근성 설정을 열겠습니다.',
   ],
   'appInfo': [
-    '1 · App info',
-    '1 · Programos informacija',
-    '1 · Información de la app',
-    '1 · Infos sur l’application',
-    '1 · App-Info',
-    '1 · 앱 정보'
+    'Open Degen Detox App info',
+    'Atverti Degen Detox informaciją',
+    'Abrir información de Degen Detox',
+    'Ouvrir les infos de Degen Detox',
+    'Degen Detox App-Info öffnen',
+    'Degen Detox 앱 정보 열기'
   ],
   'access': [
-    '2 · Accessibility',
-    '2 · Pritaikymas neįgaliesiems',
-    '2 · Accesibilidad',
-    '2 · Accessibilité',
-    '2 · Bedienungshilfen',
-    '2 · 접근성'
+    'Open blocker settings',
+    'Atverti blokatoriaus nustatymus',
+    'Abrir ajustes del bloqueador',
+    'Ouvrir les réglages du bloqueur',
+    'Blocker-Einstellungen öffnen',
+    '차단기 설정 열기'
   ],
   'refresh': [
     'Check again',
@@ -129,6 +210,9 @@ class PermissionGuide extends StatefulWidget {
 class _PermissionGuideState extends State<PermissionGuide>
     with WidgetsBindingObserver {
   bool consent = false, checking = false;
+  bool restrictedHelp = false,
+      awaitingInfoReturn = false,
+      returnedFromInfo = false;
   String state = 'off';
   String g(String key) => guideText(key, widget.locale);
   @override
@@ -146,7 +230,15 @@ class _PermissionGuideState extends State<PermissionGuide>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) check();
+    if (state == AppLifecycleState.resumed) {
+      if (awaitingInfoReturn) {
+        setState(() {
+          awaitingInfoReturn = false;
+          returnedFromInfo = true;
+        });
+      }
+      check();
+    }
   }
 
   Future<void> check() async {
@@ -191,40 +283,104 @@ class _PermissionGuideState extends State<PermissionGuide>
                   child: Text(g(state), style: const TextStyle(height: 1.6))),
             ])),
         const SizedBox(height: 20),
-        Text(g('purpose'), style: const TextStyle(height: 1.7)),
-        const SizedBox(height: 20),
-        Text(g('restricted'), style: const TextStyle(height: 1.7)),
+        if (state != 'ready') ...[
+          Text(g('intro'), style: const TextStyle(height: 1.6)),
+          const SizedBox(height: 16),
+          if (restrictedHelp) ...[
+            LuxuryPanel(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(g(returnedFromInfo ? 'stepEnable' : 'stepInfo'),
+                          style: const TextStyle(
+                              fontSize: 19, fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 14),
+                      // Schematic, not an imitation of an actionable system menu.
+                      Row(children: [
+                        const Expanded(child: Text('Android · Degen Detox')),
+                        Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                borderRadius: BorderRadius.circular(8)),
+                            child: const Text('⋮',
+                                style: TextStyle(fontSize: 26))),
+                      ]),
+                      const SizedBox(height: 14),
+                      Text('1. ${g('findMenu')}',
+                          style: const TextStyle(height: 1.6)),
+                      const SizedBox(height: 10),
+                      Text('2. ${g('allowMenu')}',
+                          style: const TextStyle(height: 1.6)),
+                      const SizedBox(height: 10),
+                      Text('3. ${g('returnStep')}',
+                          style: const TextStyle(height: 1.6)),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                          onPressed: kIsWeb
+                              ? null
+                              : () {
+                                  awaitingInfoReturn = true;
+                                  open(widget.native.openAppDetails);
+                                },
+                          icon: const Icon(Icons.more_vert),
+                          label: Text(g('appInfo'))),
+                    ])),
+            const SizedBox(height: 16),
+          ],
+          Text(g('enableHint'), style: const TextStyle(height: 1.6)),
+          CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              value: consent,
+              onChanged: (v) => setState(() => consent = v ?? false),
+              title: Text(g('consent'),
+                  style: const TextStyle(fontSize: 14, height: 1.5))),
+          FilledButton.icon(
+              onPressed: consent && !kIsWeb
+                  ? () => open(widget.native.requestAccessibilityPermission)
+                  : null,
+              icon: const Icon(Icons.accessibility_new),
+              label: Text(g('access'))),
+          if (!restrictedHelp)
+            TextButton(
+                onPressed: () => setState(() => restrictedHelp = true),
+                child: Text(g('helpButton'))),
+          if (restrictedHelp) ...[
+            const SizedBox(height: 12),
+            Text(g('safeHelp'),
+                style: const TextStyle(fontSize: 12, height: 1.6)),
+          ],
+          const SizedBox(height: 10),
+          TextButton.icon(
+              onPressed: checking ? null : check,
+              icon: const Icon(Icons.refresh),
+              label: Text(g('refresh'))),
+        ] else
+          FilledButton.icon(
+              onPressed: () => Navigator.maybePop(context),
+              icon: const Icon(Icons.check),
+              label: Text(g('done'))),
+        if (restrictedHelp && state != 'ready')
+          TextButton.icon(
+              onPressed: () => launchUrl(
+                  Uri.parse(
+                      'https://support.google.com/android/answer/12623953?hl=en'),
+                  mode: LaunchMode.externalApplication),
+              icon: const Icon(Icons.open_in_new, size: 16),
+              label: const Text('Google · Android')),
         const SizedBox(height: 16),
-        OutlinedButton.icon(
-            onPressed: kIsWeb ? null : () => open(widget.native.openAppDetails),
-            icon: const Icon(Icons.settings_outlined),
-            label: Text(g('appInfo'))),
-        CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.leading,
-            value: consent,
-            onChanged: (v) => setState(() => consent = v ?? false),
-            title: Text(g('consent'),
-                style: const TextStyle(fontSize: 14, height: 1.5))),
-        FilledButton.icon(
-            onPressed: consent && !kIsWeb
-                ? () => open(widget.native.requestAccessibilityPermission)
-                : null,
-            icon: const Icon(Icons.accessibility_new),
-            label: Text(g('access'))),
-        const SizedBox(height: 10),
-        TextButton.icon(
-            onPressed: checking ? null : check,
-            icon: const Icon(Icons.refresh),
-            label: Text(g('refresh'))),
-        TextButton.icon(
-            onPressed: () => launchUrl(
-                Uri.parse(
-                    'https://support.google.com/android/answer/12623953?hl=en'),
-                mode: LaunchMode.externalApplication),
-            icon: const Icon(Icons.open_in_new, size: 16),
-            label: const Text('Google · Android')),
-        const SizedBox(height: 16),
-        Text(g('philosophy'), style: const TextStyle(height: 1.7)),
+        ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: Text(g('details')),
+            children: [
+              Text(g('purpose'), style: const TextStyle(height: 1.7)),
+              const SizedBox(height: 12),
+              Text(g('philosophy'), style: const TextStyle(height: 1.7)),
+            ]),
       ]);
 }

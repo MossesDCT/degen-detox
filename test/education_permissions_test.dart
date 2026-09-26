@@ -68,6 +68,12 @@ void main() {
                       locale: 'en', native: AppBlockerNativeService())))));
       await tester.pumpAndSettle();
       expect(find.text(guideText(status, 'en')), findsOneWidget);
+      if (status == 'ready') {
+        expect(find.byType(CheckboxListTile), findsNothing);
+        expect(find.text(guideText('done', 'en')), findsOneWidget);
+        expect(opened, 0);
+        return;
+      }
       final button =
           find.widgetWithText(FilledButton, guideText('access', 'en'));
       expect(tester.widget<FilledButton>(button).onPressed, isNull);

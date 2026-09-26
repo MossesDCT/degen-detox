@@ -61,6 +61,7 @@ configurations.all {
 }
 
 dependencies {
+    testImplementation 'junit:junit:4.13.2'
     // Required by flutter_local_notifications 17.x for Java 8+ desugaring.
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 }

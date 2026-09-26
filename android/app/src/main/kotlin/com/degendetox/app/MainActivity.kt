@@ -158,8 +158,8 @@ class MainActivity : FlutterActivity() {
                 )
             }
 
-            apps.sortBy { it["appName"]?.lowercase() }
-            result.success(apps)
+            result.success(apps.distinctBy { it["packageName"] }
+                .sortedBy { it["appName"]?.lowercase() })
         } catch (e: Exception) {
             result.error("GET_APPS_ERROR", e.message, null)
         }
@@ -221,6 +221,16 @@ class MainActivity : FlutterActivity() {
     // ── Permission requests ────────────────────────────────────────────────────
 
     private fun handleRequestAccessibility(result: MethodChannel.Result) {
+        // AOSP detail action is not a guaranteed public SDK API. Try it only as
+        // an optional navigation shortcut; it still enforces restricted settings.
+        // OEMs without this route fall back to the public Accessibility screen.
+        try {
+            val component = android.content.ComponentName(this, BlockerAccessibilityService::class.java)
+            startActivity(Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+                .putExtra(Intent.EXTRA_COMPONENT_NAME, component.flattenToString()))
+            result.success(true)
+            return
+        } catch (_: Exception) { /* OEM fallback below. */ }
         try {
             val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

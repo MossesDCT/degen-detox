@@ -4,6 +4,8 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.Intent
+import android.app.KeyguardManager
 import android.graphics.Color
 import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
@@ -21,6 +23,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.ImageView
+import android.widget.Button
+import android.widget.ScrollView
 import java.util.concurrent.TimeUnit
 
 // ── Overlay translated strings (local to BlockerAccessibilityService) ──────────
@@ -28,39 +32,46 @@ import java.util.concurrent.TimeUnit
 private data class AccessibilityOverlayStrings(
     val quote: String,
     val subtitle: String,
-    val breathe: String
+    val breathe: String,
+    val dismiss: String
 )
 
 private val accessibilityOverlayTranslations = mapOf(
     "lt" to AccessibilityOverlayStrings(
         quote = "Programėlė pristabdyta.\nRyto apsauga įjungta.",
         subtitle = "Iki ryto fokuso pabaigos",
-        breathe = "Kvėpuok švelniai, tau patogiu tempu."
+        breathe = "Kvėpuok švelniai, tau patogiu tempu.",
+        dismiss = "Uždaryti pranešimą"
     ),
     "en" to AccessibilityOverlayStrings(
         quote = "App paused.\nMorning Shield is active.",
         subtitle = "Until morning focus ends",
-        breathe = "Breathe gently, at your own pace."
+        breathe = "Breathe gently, at your own pace.",
+        dismiss = "Dismiss notice"
     ),
     "es" to AccessibilityOverlayStrings(
         quote = "App en pausa.\nEscudo matinal activo.",
         subtitle = "Hasta que termine el enfoque matutino",
-        breathe = "Respira suavemente, a tu ritmo."
+        breathe = "Respira suavemente, a tu ritmo.",
+        dismiss = "Cerrar aviso"
     ),
     "de" to AccessibilityOverlayStrings(
         quote = "App pausiert.\nMorgenschutz ist aktiv.",
         subtitle = "Bis der Morgenfokus endet",
-        breathe = "Atme sanft in deinem eigenen Tempo."
+        breathe = "Atme sanft in deinem eigenen Tempo.",
+        dismiss = "Hinweis schließen"
     ),
     "fr" to AccessibilityOverlayStrings(
         quote = "Application en pause.\nBouclier du matin actif.",
         subtitle = "Jusqu'à la fin du focus matinal",
-        breathe = "Respirez doucement, à votre rythme."
+        breathe = "Respirez doucement, à votre rythme.",
+        dismiss = "Fermer le message"
     ),
     "ko" to AccessibilityOverlayStrings(
         quote = "앱이 일시 중지되었습니다.\n아침 보호가 활성화되어 있습니다.",
         subtitle = "아침 집중 시간 종료까지",
-        breathe = "편안한 속도로 부드럽게 호흡하세요."
+        breathe = "편안한 속도로 부드럽게 호흡하세요.",
+        dismiss = "안내 닫기"
     )
 )
 
@@ -110,7 +121,7 @@ class BlockerAccessibilityService : AccessibilityService() {
     private var countdownTextView: TextView? = null
     private var breathCircle: View? = null
     private var breathAnimator: ValueAnimator? = null
-    private var overlayShownForPackage: String? = null
+    private var homePackages: Set<String> = emptySet()
 
     private lateinit var overlayStr: AccessibilityOverlayStrings
 
@@ -119,6 +130,7 @@ class BlockerAccessibilityService : AccessibilityService() {
     private val handler = Handler(Looper.getMainLooper())
     private var countdownRunnable: Runnable? = null
     private var endTimerRunnable: Runnable? = null
+    private var dismissRunnable: Runnable? = null
 
     // ── Service lifecycle ──────────────────────────────────────────────────────
 
@@ -127,6 +139,9 @@ class BlockerAccessibilityService : AccessibilityService() {
         isRunning = true
         instance = this
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        homePackages = packageManager.queryIntentActivities(
+            Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0
+        ).map { it.activityInfo.packageName }.toSet()
 
         // Ensure we receive TYPE_WINDOW_STATE_CHANGED events
         serviceInfo = serviceInfo?.also { info ->
@@ -161,25 +176,30 @@ class BlockerAccessibilityService : AccessibilityService() {
         }
 
         val pkg = event.packageName?.toString() ?: return
+        if ((getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager).isKeyguardLocked) {
+            removeOverlay()
+            return
+        }
 
         if (blockedPackages.contains(pkg) && BlockSafety.allowed(this, pkg)) {
             // Blocked app detected — kick to home, then briefly show overlay
             performGlobalAction(GLOBAL_ACTION_HOME)
             if (overlayView == null) {
                 showOverlay()
-                overlayShownForPackage = pkg
-                // AUTO-DISMISS after 4 seconds — NEVER lock the phone
-                handler.postDelayed({
-                    removeOverlay()
-                    overlayShownForPackage = null
-                }, 4000)
+                // A single cancellable deadline. Duplicate events never extend it,
+                // and an old callback cannot dismiss a newer notice.
+                if (overlayView != null) {
+                    dismissRunnable = Runnable { removeOverlay() }
+                    handler.postDelayed(dismissRunnable!!, OverlayPolicy.NOTICE_DURATION_MS)
+                }
             }
             updateCountdownText()
         } else {
-            // ANY other app (including launcher, system UI) — remove overlay
-            if (overlayView != null) {
+            // HOME is our own transition, not a request to dismiss the notice.
+            // Calls, Settings, wallets, system UI and other apps take priority.
+            if (overlayView != null && OverlayPolicy.dismissFor(
+                    pkg, packageName, homePackages, blockedPackages, false)) {
                 removeOverlay()
-                overlayShownForPackage = null
             }
         }
     }
@@ -227,6 +247,11 @@ class BlockerAccessibilityService : AccessibilityService() {
         countdownRunnable = object : Runnable {
             override fun run() {
                 if (overlayView == null) return
+                if (!isBlockingActive || System.currentTimeMillis() >= blockEndTimeMs ||
+                    (getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager).isKeyguardLocked) {
+                    removeOverlay()
+                    return
+                }
                 updateCountdownText()
                 handler.postDelayed(this, 1000L)
             }
@@ -256,6 +281,10 @@ class BlockerAccessibilityService : AccessibilityService() {
 
     private fun showOverlay() {
         if (overlayView != null) return
+        val language = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+            .getString("flutter.$PREFS_KEY_LANGUAGE", "en")
+        overlayStr = accessibilityOverlayTranslations[language]
+            ?: accessibilityOverlayTranslations["en"]!!
 
         val layout = buildOverlayLayout()
         overlayView = layout
@@ -289,6 +318,8 @@ class BlockerAccessibilityService : AccessibilityService() {
     }
 
     fun removeOverlay() {
+        dismissRunnable?.let { handler.removeCallbacks(it) }
+        dismissRunnable = null
         stopCountdownUpdates()
 
         breathAnimator?.cancel()
@@ -302,7 +333,6 @@ class BlockerAccessibilityService : AccessibilityService() {
         overlayView = null
         countdownTextView = null
         breathCircle = null
-        overlayShownForPackage = null
     }
 
     private fun buildOverlayLayout(): View {
@@ -351,7 +381,7 @@ class BlockerAccessibilityService : AccessibilityService() {
         val content = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
-            setPadding(dp(32), dp(80), dp(32), dp(40))
+            setPadding(dp(24), dp(48), dp(24), dp(24))
         }
 
         // App name label
@@ -364,7 +394,7 @@ class BlockerAccessibilityService : AccessibilityService() {
             alpha = 1f
         }
         content.addView(appName, linearParams().apply {
-            bottomMargin = dp(48)
+            bottomMargin = dp(28)
         })
 
         // Main quote
@@ -377,17 +407,17 @@ class BlockerAccessibilityService : AccessibilityService() {
             setLineSpacing(dp(6).toFloat(), 1f)
         }
         content.addView(quote, linearParams().apply {
-            bottomMargin = dp(48)
+            bottomMargin = dp(28)
         })
 
         // Countdown
         countdownTextView = TextView(context).apply {
             text = formatRemainingTime()
             setTextColor(Color.parseColor("#ECD39C"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 52f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f)
             typeface = Typeface.MONOSPACE
             gravity = Gravity.CENTER
-            letterSpacing = 0.1f
+            letterSpacing = 0.02f
         }
         content.addView(countdownTextView, linearParams().apply {
             bottomMargin = dp(16)
@@ -401,7 +431,7 @@ class BlockerAccessibilityService : AccessibilityService() {
             gravity = Gravity.CENTER
         }
         content.addView(subtitle, linearParams().apply {
-            bottomMargin = dp(80)
+            bottomMargin = dp(32)
         })
 
         // Breathing instruction
@@ -413,9 +443,20 @@ class BlockerAccessibilityService : AccessibilityService() {
             alpha = 1f
         }
         content.addView(breathText)
+        content.addView(Button(context).apply {
+            text = overlayStr.dismiss
+            isAllCaps = false
+            setTextColor(Color.parseColor("#0B2118"))
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                Color.parseColor("#ECD39C"))
+            setOnClickListener { removeOverlay() } // Does NOT stop the schedule.
+        }, linearParams().apply { topMargin = dp(24) })
 
         root.addView(
-            content,
+            ScrollView(context).apply {
+                isFillViewport = true
+                addView(content)
+            },
             FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
