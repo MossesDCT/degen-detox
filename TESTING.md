@@ -42,7 +42,7 @@ Pirmiausia naudok QA versiją. Joje galima bandyti Pro funkcijas nemokant; tikr�
 - **SOL:** 0,1 SOL vienkartinis mokėjimas. Pro visam laikui, be „Touch Grass“.
 - **SKR:** 500 SKR vienkartinis mokėjimas. Pro visam laikui ir „Touch Grass“.
 - **Papildomos išlaidos:** Solana tinklo mokestis; SKR taip pat reikia SOL, o pirmam gavėjo žetono sąskaitos sukūrimui gali būti priskaičiuotas jos sukūrimo mokestis. Patikrink piniginėje rodomą visą sumą.
-- **Gavėjas:** `4pJkHCrfZKWJS6Jb5LyWCUAYhuxx9abKA9WniysS938e`.
+- **Gavėjas:** `[archyvinis adresas pasalintas; mokejimams naudok v0.4]`.
 - **SKR mint:** `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`, pagal [oficialų Solana Mobile puslapį](https://solanamobile.com/skr).
 
 Pirmam saugiam bandymui atidaryk pirkimą, patikrink gavėją ir kainą, tęsk į piniginę, o ten užklausą ATMESK. Pro neturi atsirakinti.

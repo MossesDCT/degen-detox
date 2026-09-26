@@ -33,32 +33,32 @@ private data class AccessibilityOverlayStrings(
 
 private val accessibilityOverlayTranslations = mapOf(
     "lt" to AccessibilityOverlayStrings(
-        quote = "Pasaulis palauks.\nTavo nervų sistema\ntau padėkos.",
+        quote = "Programėlė pristabdyta.\nRyto apsauga įjungta.",
         subtitle = "Iki ryto fokuso pabaigos",
         breathe = "Kvėpuok švelniai, tau patogiu tempu."
     ),
     "en" to AccessibilityOverlayStrings(
-        quote = "The world can wait.\nYour nervous system\nwill thank you.",
+        quote = "App paused.\nMorning Shield is active.",
         subtitle = "Until morning focus ends",
         breathe = "Breathe gently, at your own pace."
     ),
     "es" to AccessibilityOverlayStrings(
-        quote = "El mundo puede esperar.\nTu sistema nervioso\nte lo agradecerá.",
+        quote = "App en pausa.\nEscudo matinal activo.",
         subtitle = "Hasta que termine el enfoque matutino",
         breathe = "Respira suavemente, a tu ritmo."
     ),
     "de" to AccessibilityOverlayStrings(
-        quote = "Die Welt kann warten.\nDein Nervensystem\nwird es dir danken.",
+        quote = "App pausiert.\nMorgenschutz ist aktiv.",
         subtitle = "Bis der Morgenfokus endet",
         breathe = "Atme sanft in deinem eigenen Tempo."
     ),
     "fr" to AccessibilityOverlayStrings(
-        quote = "Le monde peut attendre.\nVotre système nerveux\nvous remerciera.",
+        quote = "Application en pause.\nBouclier du matin actif.",
         subtitle = "Jusqu'à la fin du focus matinal",
         breathe = "Respirez doucement, à votre rythme."
     ),
     "ko" to AccessibilityOverlayStrings(
-        quote = "세상은 기다릴 수 있어요.\n당신의 신경계가\n감사할 거예요.",
+        quote = "앱이 일시 중지되었습니다.\n아침 보호가 활성화되어 있습니다.",
         subtitle = "아침 집중 시간 종료까지",
         breathe = "편안한 속도로 부드럽게 호흡하세요."
     )

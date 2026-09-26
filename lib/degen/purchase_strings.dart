@@ -8,12 +8,12 @@ const purchaseWords = <String, List<String>>{
     '기록과 설정은 기기에 보관되며 메모는 암호화되지 않습니다. 구매 영수증은 Android 보안 저장소를 사용합니다. 결제는 Solana에 공개되며 HTTPS RPC 제공자가 IP와 조회한 지갑·거래 데이터를 받아 확인합니다. 분석, 복구 문구, 개인 키를 수집하지 않습니다. 접근성은 열린 앱만 식별하며 화면 내용을 읽지 않습니다. 호르몬 측정이나 중독 진단을 하지 않습니다.'
   ],
   'lifetime': [
-    'Pay once. Breathe easy.',
-    'Vieną kartą sumokėk ir ramu.',
-    'Paga una vez. Respira tranquilo.',
-    'Payez une fois. Respirez.',
-    'Einmal zahlen. Aufatmen.',
-    '한 번 결제하고, 편안하게.'
+    'One-time payment',
+    'Vienkartinis mokėjimas',
+    'Pago único',
+    'Paiement unique',
+    'Einmalige Zahlung',
+    '일회성 결제'
   ],
   'noSubscription': [
     'Lifetime Pro. No subscriptions. No monthly bills.',

@@ -146,6 +146,12 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
           qaBuild ? AccessTier.skr : payments.receipt?.tier ?? AccessTier.free,
       preview: previewTier);
   String t(String key) => tr(key, widget.locale);
+  void selectTab(int index) {
+    if (tab == index) return;
+    setState(() => tab = index);
+    if (scroll.hasClients) scroll.jumpTo(0);
+  }
+
   Color get accent => Theme.of(context).colorScheme.primary;
   Color get subtle => widget.light ? const Color(0xff5c6b61) : muted;
   Color get panel => widget.light ? Colors.white : const Color(0xff122219);
@@ -313,8 +319,10 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                 height: 1.12,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -1)),
-        const SizedBox(height: 12),
-        Text(sub, style: TextStyle(fontSize: 15, color: subtle, height: 1.6)),
+        if (sub.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text(sub, style: TextStyle(fontSize: 15, color: subtle, height: 1.6)),
+        ],
       ]));
   @override
   Widget build(BuildContext context) {
@@ -358,11 +366,11 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                                   leading: Icon(destinations[i].$1,
                                       color: tab == i ? accent : subtle),
                                   title: Text(t(destinations[i].$2)),
-                                  onTap: () => setState(() => tab = i))),
+                                  onTap: () => selectTab(i))),
                         const Spacer(),
                         label('SOLANA MOBILE'),
                         const SizedBox(height: 10),
-                        Text('Degen Detox · v0.3',
+                        Text('Degen Detox · v0.4',
                             style: TextStyle(color: subtle, fontSize: 12)),
                       ])),
             Expanded(
@@ -416,7 +424,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                       child: Align(
                           alignment: Alignment.topCenter,
                           child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 1000),
+                              constraints: const BoxConstraints(maxWidth: 760),
                               child: SoftEntrance(
                                   key: ValueKey(tab), child: pages[tab]))))),
             ])),
@@ -425,7 +433,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               ? null
               : NavigationBar(
                   selectedIndex: tab,
-                  onDestinationSelected: (i) => setState(() => tab = i),
+                  onDestinationSelected: selectTab,
                   destinations: [
                       for (final d in destinations)
                         NavigationDestination(icon: Icon(d.$1), label: t(d.$2))
@@ -444,18 +452,24 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                 fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -.7)),
       ]);
   Widget home() {
-    final wide = MediaQuery.of(context).size.width > 1100;
-    final content =
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      label(t('eyebrow')),
-      title(t('headline'), t('intro')),
-      morningCard(),
-      const SizedBox(height: 28),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 24),
+          child: Text(t('headline'),
+              style: const TextStyle(
+                  fontSize: 24,
+                  height: 1.4,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -.4))),
+      label(t('free')),
       rowTile(Icons.air, t('breathe'), t('breatheDesc'), breathing,
           badge: t('free')),
       Divider(color: subtle.withValues(alpha: .15)),
       rowTile(
           Icons.psychology_outlined, t('impulse'), t('impulseDesc'), impulse,
+          badge: t('free')),
+      rowTile(Icons.menu_book_outlined, t('learn'), t('learnIntro'),
+          () => selectTab(2),
           badge: t('free')),
       const SizedBox(height: 24),
       box(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -470,21 +484,21 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               '${entries.last['urge']}/10 · ${entries.last['date'].toString().substring(0, 10)}',
               style: TextStyle(color: subtle)),
       ])),
-    ]);
-    final grass = Column(children: [
-      grassCard(),
+      const SizedBox(height: 32),
+      const GoldText('PRO',
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.6)),
+      const SizedBox(height: 16),
+      morningCard(),
       const SizedBox(height: 24),
       rowTile(
           Icons.restaurant_outlined, t('recipes'), t('recipesDesc'), recipes,
-          badge: 'PRO')
+          badge: 'PRO'),
+      rowTile(Icons.nights_stay_outlined, t('wind'), t('windDesc'), wind,
+          badge: 'PRO'),
+      const SizedBox(height: 32),
+      grassCard(),
     ]);
-    return wide
-        ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Expanded(flex: 6, child: content),
-            const SizedBox(width: 36),
-            Expanded(flex: 4, child: grass)
-          ])
-        : Column(children: [content, const SizedBox(height: 28), grass]);
   }
 
   Widget morningCard() => LuxuryPanel(
@@ -562,7 +576,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                     children: [
                       tag(t('skr'), bright: true),
                       const Spacer(),
-                      const Text('Touch grass.',
+                      const Text('Touch Grass',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 34,
@@ -589,21 +603,33 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
           ])));
   Widget rituals() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        title(t('rituals'), t('ready')),
-        rowTile(Icons.shield_outlined, t('morning'), t('morningDesc'), morning,
-            badge: 'PRO'),
+        title(t('rituals'), ''),
+        label(t('free')),
         rowTile(Icons.air, t('breathe'), t('breatheDesc'), breathing,
             badge: t('free')),
         rowTile(
             Icons.psychology_outlined, t('impulse'), t('impulseDesc'), impulse,
             badge: t('free')),
-        rowTile(Icons.grass, 'Touch Grass', t('grassDesc'), grass,
-            badge: 'SKR'),
+        rowTile(Icons.menu_book_outlined, t('learn'), t('learnIntro'),
+            () => selectTab(2),
+            badge: t('free')),
+        const SizedBox(height: 24),
+        const GoldText('PRO',
+            style: TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.6)),
+        rowTile(Icons.shield_outlined, t('morning'), t('morningDesc'), morning,
+            badge: 'PRO'),
         rowTile(
             Icons.restaurant_outlined, t('recipes'), t('recipesDesc'), recipes,
             badge: 'PRO'),
         rowTile(Icons.nights_stay_outlined, t('wind'), t('windDesc'), wind,
             badge: 'PRO'),
+        const SizedBox(height: 24),
+        GoldText(t('skr'),
+            style: const TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.6)),
+        rowTile(Icons.grass, 'Touch Grass', t('grassDesc'), grass,
+            badge: 'SKR'),
       ]);
   Widget learn() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -698,7 +724,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.3 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+        Text('v0.4 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
             style: TextStyle(color: subtle)),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),

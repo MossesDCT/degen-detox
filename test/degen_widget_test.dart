@@ -31,6 +31,7 @@ void main() {
       SharedPreferences.setMockInitialValues({'degen_language': locale});
       await tester.pumpWidget(const DegenApp());
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(tr('configure', locale)));
       await tester.tap(find.text(tr('configure', locale)));
       await tester.pumpAndSettle();
       expect(find.text(tr('noSubscription', locale)), findsOneWidget);
@@ -43,7 +44,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const DegenApp());
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Set up your morning'));
+    await tester.ensureVisible(find.text(tr('configure', 'en')));
+    await tester.tap(find.text(tr('configure', 'en')));
     await tester.pumpAndSettle();
     expect(find.text(tr('noSubscription', 'en')), findsOneWidget);
     expect(find.text('Explore Pro preview'), findsNWidgets(2));
@@ -54,7 +56,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const DegenApp());
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Set up your morning'));
+    await tester.ensureVisible(find.text(tr('configure', 'en')));
+    await tester.tap(find.text(tr('configure', 'en')));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text(tr('demo', 'en')).last);
     await tester.pumpAndSettle();

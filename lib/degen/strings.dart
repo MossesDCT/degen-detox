@@ -30,29 +30,13 @@ const words = <String, List<String>>{
     'Einstellungen',
     '설정'
   ],
-  'eyebrow': [
-    'LESS NOISE. MORE YOU.',
-    'MAŽIAU TRIUKŠMO. DAUGIAU TAVĘS.',
-    'MENOS RUIDO. MÁS TÚ.',
-    'MOINS DE BRUIT. PLUS DE VOUS.',
-    'WENIGER LÄRM. MEHR DU.',
-    '소음은 줄이고, 나에게 집중.'
-  ],
   'headline': [
-    'The market can wait.',
-    'Rinka gali palaukti.',
-    'El mercado puede esperar.',
-    'Le marché peut attendre.',
-    'Der Markt kann warten.',
-    '시장은 기다릴 수 있어요.'
-  ],
-  'intro': [
-    'Your attention is your most valuable asset. Take a little of it back.',
-    'Tavo dėmesys yra vertingiausias turtas. Susigrąžink bent dalį jo.',
-    'Tu atención es tu activo más valioso. Recupera un poco de ella.',
-    'Votre attention est votre bien le plus précieux. Reprenez-en le contrôle.',
-    'Deine Aufmerksamkeit ist dein wertvollstes Gut. Hol dir ein Stück zurück.',
-    '주의력은 가장 소중한 자산이에요. 조금 되찾아 보세요.'
+    'Less bad news, fewer charts, less stress. More life. More you.',
+    'Mažiau blogų žinių, grafikų ir streso. Daugiau gyvenimo. Daugiau tavęs.',
+    'Menos malas noticias, gráficos y estrés. Más vida. Más tú.',
+    'Moins de mauvaises nouvelles, de graphiques et de stress. Plus de vie. Plus de vous.',
+    'Weniger schlechte Nachrichten, Charts und Stress. Mehr Leben. Mehr du.',
+    '나쁜 뉴스와 차트, 스트레스는 줄이고. 삶은 더 풍요롭게. 나에게 더 집중.'
   ],
   'morning': [
     'Morning Shield',
@@ -63,20 +47,20 @@ const words = <String, List<String>>{
     '아침 보호'
   ],
   'morningDesc': [
-    'A quieter start. Before the charts.',
-    'Ramesnė pradžia. Prieš grafikus.',
-    'Un inicio tranquilo. Antes de los gráficos.',
-    'Un départ calme. Avant les graphiques.',
-    'Ein ruhiger Start. Vor den Charts.',
-    '차트보다 먼저, 차분한 시작.'
+    'Block selected apps for 1–4 hours after your wake-up time.',
+    'Blokuok pasirinktas programėles 1–4 val. nuo pabudimo laiko.',
+    'Bloquea apps durante 1–4 horas desde tu hora de despertar.',
+    'Bloquez les apps choisies pendant 1 à 4 h après votre réveil.',
+    'Ausgewählte Apps ab der Aufwachzeit für 1–4 Stunden sperren.',
+    '기상 시간부터 선택한 앱을 1~4시간 차단합니다.'
   ],
   'configure': [
-    'Set up your morning',
-    'Susikurk ramų rytą',
-    'Configura tu mañana',
-    'Préparer votre matinée',
-    'Morgen einrichten',
-    '아침 설정하기'
+    'Set up blocking',
+    'Nustatyti blokavimą',
+    'Configurar bloqueo',
+    'Configurer le blocage',
+    'Sperre einrichten',
+    '차단 설정'
   ],
   'wake': [
     'Wake-up time',
@@ -140,20 +124,20 @@ const words = <String, List<String>>{
   'resume': ['Resume', 'Tęsti', 'Continuar', 'Reprendre', 'Fortsetzen', '계속'],
   'pause': ['Pause', 'Pristabdyti', 'Pausar', 'Pause', 'Pause', '일시 정지'],
   'breathe': [
-    'Breathe, not refresh.',
-    'Kvėpuok. Neatnaujink.',
-    'Respira, no actualices.',
-    'Respirez, sans actualiser.',
-    'Atmen statt aktualisieren.',
-    '새로고침 대신 호흡.'
+    'Breathing exercises',
+    'Kvėpavimo pratimai',
+    'Ejercicios de respiración',
+    'Exercices de respiration',
+    'Atemübungen',
+    '호흡 운동'
   ],
   'breatheDesc': [
-    'A little space between you and your next impulse.',
-    'Šiek tiek erdvės tarp tavęs ir kito impulso.',
-    'Un espacio entre tú y tu próximo impulso.',
-    'Un espace entre vous et votre prochaine impulsion.',
-    'Etwas Abstand zum nächsten Impuls.',
-    '다음 충동과 나 사이에 여유를.'
+    'Guided sessions with a breathing timer.',
+    'Pratimai su kvėpavimo ritmo laikmačiu.',
+    'Sesiones guiadas con temporizador de respiración.',
+    'Séances guidées avec minuteur de respiration.',
+    'Angeleitete Übungen mit Atemtimer.',
+    '호흡 타이머가 있는 안내 세션.'
   ],
   'free': ['FREE', 'NEMOKAMAI', 'GRATIS', 'GRATUIT', 'KOSTENLOS', '무료'],
   'pro': ['PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO'],
@@ -166,12 +150,12 @@ const words = <String, List<String>>{
     'SKR 전용'
   ],
   'grassDesc': [
-    'Step outside the feed. Back into real life.',
-    'Išeik iš naujienų srauto. Sugrįžk į gyvenimą.',
-    'Sal del feed. Vuelve a la vida real.',
-    'Quittez le fil. Retrouvez la vraie vie.',
-    'Raus aus dem Feed. Rein ins Leben.',
-    '피드 밖으로, 일상 속으로.'
+    'A screen-break reminder every 1–8 hours.',
+    'Priminimas atsitraukti nuo ekranų kas 1–8 val.',
+    'Un recordatorio para descansar de pantallas cada 1–8 horas.',
+    'Un rappel de pause des écrans toutes les 1 à 8 h.',
+    'Erinnerung an Bildschirmpausen alle 1–8 Stunden.',
+    '1~8시간마다 화면에서 벗어나도록 알림.'
   ],
   'grassBody': [
     'Walk. Notice the light. Meditate, pray, or simply be here. Nothing to chase.',
@@ -215,21 +199,14 @@ const words = <String, List<String>>{
     'Erinnerungen deaktivieren',
     '알림 끄기'
   ],
-  'recipes': [
-    'The calm kitchen',
-    'Ramybės virtuvė',
-    'La cocina tranquila',
-    'La cuisine sereine',
-    'Die ruhige Küche',
-    '차분한 식탁'
-  ],
+  'recipes': ['Recipes', 'Receptai', 'Recetas', 'Recettes', 'Rezepte', '레시피'],
   'recipesDesc': [
-    '20 recipes. Nourish yourself, not the noise.',
-    '20 receptų. Pamaitink save, ne triukšmą.',
-    '20 recetas. Nutre tu cuerpo, no el ruido.',
-    '20 recettes. Nourrissez-vous, pas le bruit.',
-    '20 Rezepte. Nähre dich, nicht den Lärm.',
-    '20가지 레시피. 소음 대신 나를 돌보세요.'
+    '20 recipes with ingredients and preparation steps.',
+    '20 receptų su ingredientais ir gaminimo eiga.',
+    '20 recetas con ingredientes y preparación.',
+    '20 recettes avec ingrédients et étapes.',
+    '20 Rezepte mit Zutaten und Zubereitung.',
+    '재료와 조리 과정이 포함된 레시피 20개.'
   ],
   'foodNote': [
     'Balanced meals support general wellbeing. No individual recipe is proven to lower your blood cortisol. Check ingredients for allergies; adapt to your medical needs.',
@@ -272,12 +249,12 @@ const words = <String, List<String>>{
     '충동 점검'
   ],
   'impulseDesc': [
-    'Before the next trade, check in with yourself.',
-    'Prieš kitą sandorį pasitikrink savijautą.',
-    'Antes de operar, escucha cómo te sientes.',
-    'Avant de trader, écoutez-vous.',
-    'Vor dem nächsten Trade: kurz innehalten.',
-    '다음 거래 전에 내 마음을 살펴보세요.'
+    'Record your mood and urge to trade.',
+    'Užrašyk savijautą ir norą prekiauti.',
+    'Registra tu estado de ánimo y ganas de operar.',
+    'Notez votre humeur et votre envie de trader.',
+    'Stimmung und Handelsdrang festhalten.',
+    '기분과 거래 충동을 기록하세요.'
   ],
   'urge': [
     'How strong is the urge to check the market?',
@@ -322,12 +299,12 @@ const words = <String, List<String>>{
     '트레이딩 마무리'
   ],
   'windDesc': [
-    'Close the day, not one more position.',
-    'Užbaik dieną, ne dar vieną sandorį.',
-    'Termina el día, no otra operación.',
-    'Terminez la journée, pas une position de plus.',
-    'Beende den Tag, nicht noch einen Trade.',
-    '거래 하나 더 대신, 오늘을 마무리해요.'
+    'A three-step routine to finish your trading session.',
+    'Trijų žingsnių ritualas prekybos sesijai užbaigti.',
+    'Una rutina de tres pasos para terminar la sesión.',
+    'Une routine en trois étapes pour terminer la séance.',
+    'Drei Schritte zum Abschluss deiner Handelssitzung.',
+    '거래 세션을 마치는 3단계 루틴.'
   ],
   'wind1': [
     'Review your own risk plan before stepping away.',
@@ -362,12 +339,12 @@ const words = <String, List<String>>{
     '루틴 완료'
   ],
   'proTitle': [
-    'Protect your peace.',
-    'Saugok savo ramybę.',
-    'Protege tu tranquilidad.',
-    'Protégez votre sérénité.',
-    'Schütze deine Ruhe.',
-    '나의 평온을 지켜요.'
+    'Lifetime Pro',
+    'Pro visam laikui',
+    'Pro de por vida',
+    'Pro à vie',
+    'Pro auf Lebenszeit',
+    '평생 Pro'
   ],
   'paySol': [
     'Pro with SOL',
@@ -499,12 +476,12 @@ const words = <String, List<String>>{
     '근거 보기'
   ],
   'learnIntro': [
-    'Understand the loop. Change your relationship with it.',
-    'Suprask įpročio ratą. Pakeisk santykį su juo.',
-    'Comprende el ciclo. Cambia tu relación con él.',
-    'Comprenez la boucle. Changez votre relation avec elle.',
-    'Verstehe die Schleife. Verändere deinen Umgang damit.',
-    '습관의 고리를 이해하고 관계를 바꿔보세요.'
+    '8 guides to stress, screen use and trading habits.',
+    '8 temos apie stresą, ekranus ir prekybos įpročius.',
+    '8 guías sobre estrés, pantallas y hábitos de trading.',
+    '8 guides sur le stress, les écrans et le trading.',
+    '8 Ratgeber zu Stress, Bildschirmen und Handelsgewohnheiten.',
+    '스트레스, 화면 사용, 거래 습관에 관한 가이드 8개.'
   ],
   'cortisolTitle': [
     'Cortisol is not the enemy',
@@ -572,12 +549,12 @@ const words = <String, List<String>>{
   ],
   'back': ['Back', 'Atgal', 'Atrás', 'Retour', 'Zurück', '뒤로'],
   'empty': [
-    'Your first check-in starts here. No scores to chase.',
-    'Čia prasideda pirmoji savistaba. Jokių balų vaikymosi.',
-    'Tu primer registro empieza aquí. Sin perseguir puntos.',
-    'Votre premier bilan commence ici. Aucun score à poursuivre.',
-    'Hier beginnt dein erster Check-in. Kein Punktedruck.',
-    '첫 마음 기록을 시작해요. 점수를 쫓을 필요 없어요.'
+    'No check-ins saved yet.',
+    'Išsaugotų savistabų dar nėra.',
+    'Aún no hay registros guardados.',
+    'Aucun bilan enregistré.',
+    'Noch keine Check-ins gespeichert.',
+    '아직 저장된 기록이 없습니다.'
   ],
   'ready': [
     'A moment for yourself',

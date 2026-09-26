@@ -46,7 +46,7 @@ Meniu pavadinimai priklauso nuo Android versijos. Jei papildomo meniu nėra arba
 - **500 SKR:** tas pats Pro ir papildoma „Touch Grass“ priminimų funkcija.
 - **Jokių mėnesinių prenumeratų.** Tai vienkartinis mokėjimas, tačiau tinklo mokesčiai mokami atskirai.
 - **SKR mokėjimui irgi reikia šiek tiek SOL** tinklo mokesčiui; jei gavėjo žetono sąskaitą reikės sukurti, piniginėje gali būti rodoma papildoma jos sukūrimo išlaida.
-- **Gavėjo adresas:** `4pJkHCrfZKWJS6Jb5LyWCUAYhuxx9abKA9WniysS938e`.
+- **Gavėjo adresas:** `[archyvinis adresas pasalintas; mokejimams naudok v0.4]`.
 - **SKR mint:** `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`. Oficialus žetono adresas pateikiamas [Solana Mobile](https://solanamobile.com/skr).
 
 Pirkimas vyksta per suderinamą telefone įdiegtą Solana piniginę. Patvirtinimo lange rodomas gavėjas, suma ir tinklas; atkūrimo frazės ar privataus rakto į Degen Detox įvesti nereikia.

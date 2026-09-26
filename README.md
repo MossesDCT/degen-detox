@@ -1,6 +1,6 @@
 # Degen Detox
 
-Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.3 adds forest/parallax visuals, gold Pro typography, corrected launcher artwork, eight educational articles in six languages, and a consent-based Android permission guide. Real Mobile Wallet Adapter checkout, on-chain receipt verification, native reminders and morning blocking are retained.
+Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.4 rotates the SOL/SKR payment recipient at the owner's request, reduces promotional copy to one home slogan, and orders Today and Rituals as Free → Pro → SKR. The v0.3 forest/gold design, education, permission guide and real Mobile Wallet Adapter checkout are retained.
 
 This is a device-test release candidate. Automated tests and compilation do not establish that Seeker wallet interaction, background alarms and Accessibility behave correctly on the user's specific device.
 
@@ -9,7 +9,7 @@ This is a device-test release candidate. Automated tests and compilation do not 
 - 0.1 SOL: lifetime Pro, morning blocking, 20 recipes and Trading Wind-down.
 - 500 SKR: the same lifetime Pro plus Touch Grass.
 - No subscriptions or monthly app payments. Solana fees are separate.
-- Payment recipient: `4pJkHCrfZKWJS6Jb5LyWCUAYhuxx9abKA9WniysS938e`.
+- Payment recipient: `6vqJTwDWoNXauztA3e8psbnrm4bNWFDAG218NbAMPgaG`.
 - Mainnet SKR mint: `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`, six decimals, standard SPL Token program. Official mint reference: [Solana Mobile](https://solanamobile.com/skr).
 
 ## Build and test
@@ -52,7 +52,7 @@ There is no deployed centralized licensing server. Verification trusts the confi
 
 ## Before public release
 
-Complete `INSTALL_v0.3_LT.md` and the detailed cases in `TESTING.md` on a physical Solana Seeker. In particular verify wallet cancellation, successful SOL and SKR checkout with separate payer wallets, pending-payment recovery, reinstall/restore, permission denial, overnight blocking and background reminders. No real wallet transaction was made by the build agent. The automated suite currently contains 40 passing tests; static analysis of active code reports no issues. The older TESTING.md describes the v0.2 QA package; v0.3 delivery is the real-payment production flavor, not a free-unlocked QA build.
+Complete `INSTALL_v0.4_LT.md` and the detailed cases in `TESTING.md` on a physical Solana Seeker. In particular verify wallet cancellation, successful SOL and SKR checkout with separate payer wallets, pending-payment recovery, reinstall/restore, permission denial, overnight blocking and background reminders. No real wallet transaction was made by the build agent. The automated suite currently contains 47 passing tests; static analysis of active code reports no issues. Older installation documents and APKs are obsolete for payment testing: use v0.4 with the new recipient. This delivery is the real-payment production flavor, not a free-unlocked QA build.
 
 Production signing, native-speaker translation review, legal/contact details and hackathon eligibility confirmation remain release requirements. See `PROVENANCE.md`; this is a disclosed derivative, not a claim that all code was newly authored for a hackathon.
 

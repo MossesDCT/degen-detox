@@ -12,7 +12,7 @@ import 'package:solana_mobile_client/solana_mobile_client.dart';
 import 'domain.dart';
 
 const qaBuild = bool.fromEnvironment('DEGEN_QA');
-const merchant = '4pJkHCrfZKWJS6Jb5LyWCUAYhuxx9abKA9WniysS938e';
+const merchant = '6vqJTwDWoNXauztA3e8psbnrm4bNWFDAG218NbAMPgaG';
 const skrMint = 'SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3';
 const tokenProgram = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 const memoProgram = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';

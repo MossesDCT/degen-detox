@@ -15,7 +15,7 @@ Versija: `0.2.0`, versijos kodas `2`. Flutter vykdymo dalis sukurta ARM64 telefo
 
 0,1 SOL arba 500 SKR, vieną kartą už Pro prieigą visam laikui. Jokių prenumeratų ar mėnesinių programėlės mokesčių; tinklo mokesčiai atskiri. Mokėję SKR gauna papildomą „Touch Grass“ funkciją.
 
-Gavėjas: `4pJkHCrfZKWJS6Jb5LyWCUAYhuxx9abKA9WniysS938e`. SKR identifikuojamas pagal tikslų mint adresą `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`, skelbiamą [Solana Mobile](https://solanamobile.com/skr), o ne vien pagal simbolį.
+Gavėjas: `[archyvinis adresas pasalintas; mokejimams naudok v0.4]`. SKR identifikuojamas pagal tikslų mint adresą `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`, skelbiamą [Solana Mobile](https://solanamobile.com/skr), o ne vien pagal simbolį.
 
 ## Atliktos patikros
 
