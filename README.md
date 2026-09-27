@@ -2,7 +2,7 @@
 
 Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.9 localizes recipe measurements, adds persistent ingredient checkboxes and an optional custom fourth evening ritual step in six languages. v0.8's SKR upgrade, urge insights and Google consumer-app filtering are retained. The owner confirmed a real SKR checkout worked on Seeker; new SOL-to-SKR upgrade device acceptance remains separate.
 
-The delivered v0.10 APK uses normal production flags, without owner reset tools. It adds a bundled 3.2-second birdsong notification, conservative channel migration and a channel-settings shortcut; physical locked-screen playback still needs Seeker acceptance. Existing purchases, check-ins and block settings are preserved; there is no entitlement reset migration. Ingredient checks and user-authored ritual text stay in local preferences, not an encrypted medical record; browser previews keep these only in memory.
+The delivered v0.10 APK uses normal production flags, without owner reset tools. It adds a bundled 3.2-second birdsong notification, conservative channel migration and a channel-settings shortcut. On 27 September 2026 the owner reported that the update works on Seeker; this is owner acceptance, not an independent device matrix. Existing purchases, check-ins and block settings are preserved; there is no entitlement reset migration. Ingredient checks and user-authored ritual text stay in local preferences, not an encrypted medical record; browser previews keep these only in memory.
 
 This is a device-test release candidate. Automated tests and compilation do not establish that Seeker wallet interaction, background alarms and Accessibility behave correctly on the user's specific device.
 
@@ -56,6 +56,8 @@ There is no deployed centralized licensing server. Verification trusts the confi
 - Six languages, dark/light appearance, free breathing, education and Impulse Check.
 
 ## Before public release
+
+Current hackathon preparation is in [`hackathon/prep-2026-09-27/`](hackathon/prep-2026-09-27/00_PRADĖK_ČIA_LT.md). Use its [reviewer guide](hackathon/prep-2026-09-27/05_JUDGES_GUIDE_EN.md) and [readiness record](hackathon/prep-2026-09-27/06_READINESS_AND_PROVENANCE_EN.md) for v0.10. The separate v0.10 QA flavor has been built and package-checked, but still needs a physical installation check. Registration, organizer clarification, repository hosting and final submission have not been completed.
 
 Complete `INSTALL_v0.7_LT.md`, `QA_v0.7.md` and relevant cases in `TESTING.md` on a physical Solana Seeker. Superseded historical stop-button checks no longer apply. Verify fast opening, strict timing, numeric entry, wallet return, SKR checkout and Grass reminders. No real wallet transaction was made by the build agent. Restore remains available without repurchase. The same package, signing certificate and receipt keys preserve local Pro until the owner explicitly uses the test-only reset. Public builds must omit DEGEN_OWNER_TEST_TOOLS.
 
