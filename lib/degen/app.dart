@@ -25,6 +25,7 @@ import 'impulse_insights.dart';
 import 'ritual_store.dart';
 import 'recipe_panel.dart';
 import 'wind_panel.dart';
+import 'grass_sound_strings.dart';
 
 const pine = Color(0xff0b1712),
     leaf = Color(0xffc4eb87),
@@ -391,7 +392,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                         const Spacer(),
                         label('SOLANA MOBILE'),
                         const SizedBox(height: 10),
-                        Text('Degen Detox · v0.9',
+                        Text('Degen Detox · v0.10',
                             style: TextStyle(color: subtle, fontSize: 12)),
                       ])),
             Expanded(
@@ -748,7 +749,7 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
               onPressed: () => setState(() => previewTier = AccessTier.free),
               child: Text(t('endPreview'))),
         const SizedBox(height: 16),
-        Text('v0.9 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
+        Text('v0.10 · ${qaBuild ? t('qaBanner') : 'Degen Detox'}',
             style: TextStyle(color: subtle)),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: upgrade, child: Text(t('restore'))),
@@ -1092,6 +1093,31 @@ class _DetoxShellState extends State<DetoxShell> with WidgetsBindingObserver {
                     TextButton(
                         onPressed: reminders.test,
                         child: Text(t('testReminder'))),
+                  const SizedBox(height: 16),
+                  Row(children: [
+                    Icon(Icons.music_note_outlined, color: goldFor(context)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: GoldText(grassSoundText('sound', widget.locale),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600))),
+                  ]),
+                  const SizedBox(height: 10),
+                  Text(grassSoundText('hint', widget.locale),
+                      style:
+                          TextStyle(color: subtle, fontSize: 13, height: 1.6)),
+                  if (access.grass && !kIsWeb)
+                    TextButton.icon(
+                        icon: const Icon(Icons.settings_outlined),
+                        label: Text(grassSoundText('settings', widget.locale)),
+                        onPressed: () async {
+                          final opened = await reminders.openSoundSettings();
+                          if (!opened && mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    grassSoundText('error', widget.locale))));
+                          }
+                        }),
                   if (grassEnabled)
                     Text(t('remindersOn'), style: TextStyle(color: accent)),
                   const SizedBox(height: 16),

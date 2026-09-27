@@ -43,4 +43,15 @@ class GrassReminders {
     await _channel.invokeMethod('cancelGrass');
     await (await SharedPreferences.getInstance()).remove('degen_grass_hours');
   }
+
+  Future<bool> openSoundSettings() async {
+    if (kIsWeb) return false;
+    try {
+      return await _channel
+              .invokeMethod<bool>('openGrassNotificationSettings') ==
+          true;
+    } on PlatformException {
+      return false;
+    }
+  }
 }

@@ -125,6 +125,21 @@ class MainActivity : FlutterActivity() {
                         }
                     }
                     "cancelGrass" -> { GrassSchedule.cancel(this); result.success(true) }
+                    "openGrassNotificationSettings" -> {
+                        try {
+                            val id = GrassSchedule.ensureChannel(this)
+                            val settings = if (Build.VERSION.SDK_INT >= 26) {
+                                Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                                    .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                                    .putExtra(Settings.EXTRA_CHANNEL_ID, id)
+                            } else Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.parse("package:$packageName"))
+                            startActivity(settings)
+                            result.success(true)
+                        } catch (e: Exception) {
+                            result.error("NOTIFICATION_SETTINGS", e.message, null)
+                        }
+                    }
                     "grassLaunch" -> {
                         val open = intent.getBooleanExtra("open_grass", false)
                         intent.removeExtra("open_grass")
