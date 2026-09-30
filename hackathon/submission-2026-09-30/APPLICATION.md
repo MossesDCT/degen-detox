@@ -46,9 +46,32 @@ SKR purchases a specific consumer utility, not staking, rewards or price exposur
 
 https://drive.google.com/file/d/1hRMbZsmwIDRrDhzMpnDLQufvyilikdYp/view?usp=drivesdk
 
+## Deck URL
+
+https://www.perplexity.ai/computer/a/cf8045d7-0734-4fe4-b500-5ed4c61ac777
+
+## Repository URL
+
+https://github.com/MossesDCT/degen-detox
+
+Private repository. The owner must grant the organizers' ALIGN application access separately before final submission.
+
+## Android APK URL
+
+https://drive.google.com/uc?id=1_F9o0LUrRtx_xBpP-b3aqX3-eIHQCYUL&export=download
+
+Use this Mainnet link in the required APK field. The separate no-payment QA package is linked prominently in the repository README and reviewer guide.
+
+## Optional QA APK URL or additional reviewer note
+
+https://drive.google.com/uc?id=1L5U3hxeNwyJeD86yBX8mGMDHKvb5IoMm&export=download
+
+Two clearly labelled APKs are provided as agreed with the organizers. Mainnet retains real purchases; the separately packaged QA APK unlocks paid features without requiring judges to pay. See the README for both downloads and integrity hashes.
+
 ## Submission safeguards
 
-- Add final published Deck, Repository and direct Android APK URLs only after they are verified.
+- Deck publication is confirmed, but an automated anonymous browser hit a Cloudflare security check. The owner should open the deck in an incognito browser before final submission.
+- Both APK uploads match source checksums and have anyone-with-link viewer permissions. Anonymous viewers expose Download controls.
 - Grant ALIGN access to the private repository before submission.
 - Verify the separate QA installation on Seeker if possible.
 - Confirm all owner declarations and review the final submission agreement. Do not infer age, legal residence or content rights from profile details.

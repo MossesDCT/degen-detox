@@ -10,8 +10,8 @@ Current candidate: **v0.10.0+10**, implementation commit `01ef285`. Documentatio
 
 | Review build | Package | Meaning |
 |---|---|---|
-| Mainnet v0.10 | `com.degendetox.app` | Real mainnet purchases; no owner reset or QA entitlement flags |
-| QA v0.10 JUDGES | `com.degendetox.app.qa` | Paid features unlocked for review; real payment controls disabled |
+| [Mainnet v0.10 download](https://drive.google.com/uc?id=1_F9o0LUrRtx_xBpP-b3aqX3-eIHQCYUL&export=download) | `com.degendetox.app` | Real mainnet purchases; no owner reset or QA entitlement flags |
+| [QA v0.10 JUDGES download](https://drive.google.com/uc?id=1L5U3hxeNwyJeD86yBX8mGMDHKvb5IoMm&export=download) | `com.degendetox.app.qa` | Paid features unlocked for review; real payment controls disabled |
 
 Use QA to inspect features without spending funds. QA blocking is real native blocking, not a UI simulation. Both packages can coexist with separate data. The creator reports successful Mainnet tests on Seeker; the separate QA package was built and package-checked but does not yet have a confirmed physical-device acceptance report.
 

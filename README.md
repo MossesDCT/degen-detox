@@ -6,7 +6,10 @@ Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 
 
 ## Start here: CLOCK IN judges
 
+- [Public visual pitch deck](https://www.perplexity.ai/computer/a/cf8045d7-0734-4fe4-b500-5ed4c61ac777)
 - [Approved three-minute real-device demo](https://drive.google.com/file/d/1hRMbZsmwIDRrDhzMpnDLQufvyilikdYp/view?usp=drivesdk)
+- [Mainnet APK: real purchases](https://drive.google.com/uc?id=1_F9o0LUrRtx_xBpP-b3aqX3-eIHQCYUL&export=download)
+- [QA APK: unlocked features, no payment required](https://drive.google.com/uc?id=1L5U3hxeNwyJeD86yBX8mGMDHKvb5IoMm&export=download)
 - [Current judge guide and APK integrity](hackathon/submission-2026-09-30/JUDGES_GUIDE.md)
 - [Pre-existing code and new-work disclosure](PROVENANCE.md)
 - [Third-party dependencies and notices](THIRD_PARTY_NOTICES.md)
