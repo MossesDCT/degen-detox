@@ -48,7 +48,7 @@ https://drive.google.com/file/d/1hRMbZsmwIDRrDhzMpnDLQufvyilikdYp/view?usp=drive
 
 ## Deck URL
 
-https://www.perplexity.ai/computer/a/cf8045d7-0734-4fe4-b500-5ed4c61ac777
+https://drive.google.com/file/d/1DsKFZsLS0FYJdK8MHSDjAJ1fdWWwk9SK/view?usp=drivesdk
 
 ## Repository URL
 
@@ -70,7 +70,7 @@ Two clearly labelled APKs are provided as agreed with the organizers. Mainnet re
 
 ## Submission safeguards
 
-- Deck publication is confirmed, but an automated anonymous browser hit a Cloudflare security check. The owner should open the deck in an incognito browser before final submission.
+- PDF deck publication is confirmed; anonymous browser displayed the 11-page PDF viewer without requiring sign-in. This supersedes the interactive deck link that automated coaching could not read.
 - Both APK uploads match source checksums and have anyone-with-link viewer permissions. Anonymous viewers expose Download controls.
 - Grant ALIGN access to the private repository before submission.
 - Verify the separate QA installation on Seeker if possible.
