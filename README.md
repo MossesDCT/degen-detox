@@ -1,6 +1,30 @@
 # Degen Detox
 
-Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Version 0.9 localizes recipe measurements, adds persistent ingredient checkboxes and an optional custom fourth evening ritual step in six languages. v0.8's SKR upgrade, urge insights and Google consumer-app filtering are retained. The owner confirmed a real SKR checkout worked on Seeker; new SOL-to-SKR upgrade device acceptance remains separate.
+Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 3.11.1 and JDK 17. Current review version: **0.10.0+10**. Solo, self-funded, AI-assisted development with hands-on Solana Seeker testing.
+
+**Your morning belongs to you, not the market.** Morning Shield creates a chosen 1–4-hour boundary between waking up and social feeds, trading charts and alarming headlines. Start with breakfast, a breath or something positive before opening the market. This is digital-wellbeing support, not a claim of guaranteed cortisol reduction or addiction treatment.
+
+## Start here: CLOCK IN judges
+
+- [Approved three-minute real-device demo](https://drive.google.com/file/d/1hRMbZsmwIDRrDhzMpnDLQufvyilikdYp/view?usp=drivesdk)
+- [Current judge guide and APK integrity](hackathon/submission-2026-09-30/JUDGES_GUIDE.md)
+- [Pre-existing code and new-work disclosure](PROVENANCE.md)
+- [Third-party dependencies and notices](THIRD_PARTY_NOTICES.md)
+- [Final form copy](hackathon/submission-2026-09-30/APPLICATION.md)
+
+The organizers confirmed eligibility in written correspondence received by the creator on 29 September 2026, after explicit disclosure of the older Cortisol Zero foundation. They also accepted separately labelled Mainnet and unlocked QA APKs and private-repository review via the ALIGN GitHub application. The creator retains the email; we do not publish private correspondence or claim that all code was newly written for this event.
+
+This repository preserves its actual development history. The submitted v0.10 APK implementation is commit `01ef285`; later preparation changes are documentation only. Judge access through ALIGN must be granted separately; private repository creation alone does not grant it.
+
+## Pre-existing code, new work and libraries
+
+| Category | Scope |
+|---|---|
+| **Pre-existing: Cortisol Zero v61** | Earlier Flutter/Android scaffolding, blocking-service foundations, localized recipe and breathing content, inherited audio and retained legacy screens. The baseline predates CLOCK IN. |
+| **New: Degen Detox** | Crypto-specific product/UI, MWA SOL/SKR checkout, strict receipt checks and wallet-proof restoration, distinct SKR entitlement and upgrade path, wallet-return lifecycle fixes, native blocker UX/refinements, urge history, custom evening ritual, Touch Grass reminders and birdsong channel. |
+| **Third party** | Flutter/Dart; Android/Kotlin; `solana`, locally patched `solana_mobile_client`, `flutter_secure_storage`, `shared_preferences`, `permission_handler`, `http`, `cryptography`, `bs58`, `equatable`, `intl`, `url_launcher`, Flutter localization/testing/lints, AndroidX/JUnit/desugaring and font assets. Exact direct versions and the vendor patch are listed in `THIRD_PARTY_NOTICES.md`; the full Dart dependency graph is pinned in `pubspec.lock`. |
+
+Code reuse was authorized by the owner. The first Degen Detox commit dates from 24 September 2026; that date is not represented as the creation date of the inherited code.
 
 The delivered v0.10 APK uses normal production flags, without owner reset tools. It adds a bundled 3.2-second birdsong notification, conservative channel migration and a channel-settings shortcut. On 27 September 2026 the owner reported that the update works on Seeker; this is owner acceptance, not an independent device matrix. Existing purchases, check-ins and block settings are preserved; there is no entitlement reset migration. Ingredient checks and user-authored ritual text stay in local preferences, not an encrypted medical record; browser previews keep these only in memory.
 
@@ -57,13 +81,13 @@ There is no deployed centralized licensing server. Verification trusts the confi
 
 ## Before public release
 
-Current hackathon preparation is in [`hackathon/prep-2026-09-27/`](hackathon/prep-2026-09-27/00_PRADĖK_ČIA_LT.md). Use its [reviewer guide](hackathon/prep-2026-09-27/05_JUDGES_GUIDE_EN.md) and [readiness record](hackathon/prep-2026-09-27/06_READINESS_AND_PROVENANCE_EN.md) for v0.10. The separate v0.10 QA flavor has been built and package-checked, but still needs a physical installation check. Registration, organizer clarification, repository hosting and final submission have not been completed.
+Current submission documents are in [`hackathon/submission-2026-09-30/`](hackathon/submission-2026-09-30/JUDGES_GUIDE.md). The 27 September preparation folder is historical; its then-pending registration and eligibility statements have been superseded. The creator has registered as a solo participant and received eligibility confirmation. The separate v0.10 QA flavor has been built and package-checked, but still needs a physical installation check. Final submission status must be verified in ALIGN, not inferred from this repository.
 
 Complete `INSTALL_v0.7_LT.md`, `QA_v0.7.md` and relevant cases in `TESTING.md` on a physical Solana Seeker. Superseded historical stop-button checks no longer apply. Verify fast opening, strict timing, numeric entry, wallet return, SKR checkout and Grass reminders. No real wallet transaction was made by the build agent. Restore remains available without repurchase. The same package, signing certificate and receipt keys preserve local Pro until the owner explicitly uses the test-only reset. Public builds must omit DEGEN_OWNER_TEST_TOOLS.
 
 The `vendor/solana_mobile_client` override preserves upstream 0.1.2 APIs and license, with a narrow Android lifecycle patch documented in `DEGEN_PATCH.md`. The patched dependency must be included with the source project.
 
-Production signing, native-speaker translation review, legal/contact details and hackathon eligibility confirmation remain release requirements. See `PROVENANCE.md`; this is a disclosed derivative, not a claim that all code was newly authored for a hackathon.
+Production signing, native-speaker translation review, content-rights review and legal/contact details remain store-release requirements. Hackathon eligibility has been confirmed as described above. See `PROVENANCE.md`; this is a disclosed derivative, not a claim that all code was newly authored for a hackathon.
 
 ## Project layout and privacy
 
