@@ -14,6 +14,7 @@ Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 
 - [Pre-existing code and new-work disclosure](PROVENANCE.md)
 - [Third-party dependencies and notices](THIRD_PARTY_NOTICES.md)
 - [Final form copy](hackathon/submission-2026-09-30/APPLICATION.md)
+- [Maintainer review of the portal's exported-launcher finding](hackathon/submission-2026-09-30/SECURITY_FINDING_REVIEW.md)
 
 The organizers confirmed eligibility in written correspondence received by the creator on 29 September 2026, after explicit disclosure of the older Cortisol Zero foundation. They also accepted separately labelled Mainnet and unlocked QA APKs and private-repository review via the ALIGN GitHub application. The creator retains the email; we do not publish private correspondence or claim that all code was newly written for this event.
 
