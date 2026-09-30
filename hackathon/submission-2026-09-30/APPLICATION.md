@@ -54,7 +54,7 @@ https://mossesdct.github.io/degen-detox-deck/Degen-Detox-CLOCK-IN-Deck.pdf
 
 https://github.com/MossesDCT/degen-detox
 
-Private repository. The owner must grant the organizers' ALIGN application access separately before final submission.
+Public repository since 30 September 2026, explicitly authorized by the owner for code review and the hackathon security module. The application Repository URL has not changed.
 
 ## Android APK URL
 
@@ -72,7 +72,7 @@ Two clearly labelled APKs are provided as agreed with the organizers. Mainnet re
 
 - The PDF now has a direct public GitHub Pages URL. An independent automated content reader retrieved text from all 11 pages. This replaces the Drive viewer URL for the Deck field; the hackathon Coach's next ingestion is not yet confirmed.
 - Both APK uploads match source checksums and have anyone-with-link viewer permissions. Anonymous viewers expose Download controls.
-- Grant ALIGN access to the private repository before submission.
+- Source is now public and anonymously readable. The portal security audit has not yet been run by the build agent.
 - Verify the separate QA installation on Seeker if possible.
 - Confirm all owner declarations and review the final submission agreement. Do not infer age, legal residence or content rights from profile details.
 - Do not submit placeholder URLs or claim the application has already been accepted.
