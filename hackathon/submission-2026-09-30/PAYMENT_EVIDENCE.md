@@ -44,8 +44,12 @@ A receipt is bound to its original payer and transaction signature. Restoration 
 
 The separate QA APK deliberately unlocks features without payment. QA access is not evidence of Mainnet checkout, and the QA package is not the customer payment build.
 
-## Evidence still absent from the current demo
+## Recorded checkout and remaining evidence gaps
 
-The founder reports real SOL and SKR purchases on Seeker. The submitted three-minute video shows an already activated SKR entitlement, not a fresh wallet authorization, finalized transaction, cancel/pending sequence or restoration. Those are distinct evidence gaps; neither this source map nor the automated tests substitutes for an actual recording.
+The main three-minute product video shows an already activated SKR entitlement. The supplementary [Live SKR payment demonstration](https://drive.google.com/file/d/1wMlqvnSXjzpJkJTefM3B_jLDQ1l73hly/view?usp=drivesdk), recorded on Seeker on 30 September 2026, shows initial cancellation, a subsequent transaction-signing flow, return to the app, a pending state and activation of SKR access, followed by Touch Grass settings and its nature scene.
+
+This 87-second clip preserves the original continuous sequence at normal speed and adds English narration, side-panel explanations and opaque redaction of wallet identifiers. The wallet verification warning and app status messages remain visible. An additional wallet request is cancelled after activation; the resulting generic "No purchase was confirmed" status appears alongside the active entitlement and is a confusing UI message, not proof of another payment or successful restoration.
+
+Successful purchase restoration, a fresh SOL checkout and independent transaction-finality verification are not demonstrated by this clip. The source map and unit tests are separate evidence, not a substitute for those remaining checks.
 
 The portal report supplied by the owner lists Android as its reviewed area. Its unverified exported-launcher item is discussed in [the maintainer's contextual review](SECURITY_FINDING_REVIEW.md). It does not establish a comprehensive audit of these Dart payment paths.

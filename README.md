@@ -9,6 +9,7 @@ Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 
 - [Public presentation: readable Google Docs version](https://docs.google.com/document/d/1j15pdTg-JvIWPIyru7ky2o1sPCmHgumvs2GiaqNcQ6w/mobilebasic)
 - [Visual PDF pitch deck with screenshots](https://mossesdct.github.io/degen-detox-deck/Degen-Detox-CLOCK-IN-Deck.pdf)
 - [Approved three-minute real-device demo](https://drive.google.com/file/d/1hRMbZsmwIDRrDhzMpnDLQufvyilikdYp/view?usp=drivesdk)
+- [Live SKR payment demonstration: 87-second Seeker recording](https://drive.google.com/file/d/1wMlqvnSXjzpJkJTefM3B_jLDQ1l73hly/view?usp=drivesdk)
 - [Mainnet APK: real purchases](https://drive.google.com/uc?id=1_F9o0LUrRtx_xBpP-b3aqX3-eIHQCYUL&export=download)
 - [QA APK: unlocked features, no payment required](https://drive.google.com/uc?id=1L5U3hxeNwyJeD86yBX8mGMDHKvb5IoMm&export=download)
 - [Current judge guide and APK integrity](hackathon/submission-2026-09-30/JUDGES_GUIDE.md)
@@ -17,6 +18,8 @@ Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 
 - [Final form copy](hackathon/submission-2026-09-30/APPLICATION.md)
 - [Maintainer review of the portal's exported-launcher finding](hackathon/submission-2026-09-30/SECURITY_FINDING_REVIEW.md)
 - [Payment implementation and test evidence map](hackathon/submission-2026-09-30/PAYMENT_EVIDENCE.md)
+
+The supplementary SKR video shows an initial cancelled wallet request, a subsequent transaction-signing flow, return to the app, a pending state and activation of SKR access with Touch Grass. It preserves the continuous recording at normal speed, with wallet identifiers redacted. An additional wallet request is cancelled after activation; successful purchase restoration and independent on-chain verification are not demonstrated by this clip. The main three-minute product demo remains unchanged.
 
 The organizers confirmed eligibility in written correspondence received by the creator on 29 September 2026, after explicit disclosure of the older Cortisol Zero foundation. They also accepted separately labelled Mainnet and unlocked QA APKs and private-repository review via the ALIGN GitHub application. The creator retains the email; we do not publish private correspondence or claim that all code was newly written for this event.
 
