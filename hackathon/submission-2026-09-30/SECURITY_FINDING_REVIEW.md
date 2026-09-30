@@ -8,11 +8,11 @@ The supplied portal screenshots show one finding, rated **Medium / Needs review 
 
 > An exported component has no permission on it, so any app on the device can start it.
 
-The report points to [`AndroidManifest.xml`, line 37 at audited commit ae01ce5](https://github.com/MossesDCT/degen-detox/blob/ae01ce576a43f431b1fc2af6d8de4a21fc6dff50/android/app/src/main/AndroidManifest.xml#L37). The screenshots also list scan limitations: `non-shipping-source`, `partial-selection`, `missing-source`, `partial-input`. The full downloadable audit report has not been supplied for this review. One visible finding must not be interpreted as complete coverage or proof that no other vulnerabilities exist.
+The report points to [`AndroidManifest.xml`, line 37 at audited commit ae01ce5](https://github.com/MossesDCT/degen-detox/blob/ae01ce576a43f431b1fc2af6d8de4a21fc6dff50/android/app/src/main/AndroidManifest.xml#L37). The screenshots also list scan limitations: `non-shipping-source`, `partial-selection`, `missing-source`, `partial-input`. The owner subsequently supplied the report's text. It lists only `Android / android` in its scope table, says "Nothing was confirmed as a defect", and describes this item as unverified. Its recommendation reads: "No change needed; a launcher activity legitimately requires android:exported=true." This is a description of the supplied report, not a claim that the whole repository or payment flow received a complete audit.
 
 ## Disposition
 
-**Expected public launcher exposure; exploitable impact is not established by the supplied finding. Reviewer confirmation remains pending.**
+**Expected public launcher exposure; the supplied report does not establish exploitable impact and recommends no change for the launcher configuration.**
 
 The referenced component is `.MainActivity`, the app's `MAIN` / `LAUNCHER` entry point. It is deliberately exported so the device launcher can open the app. Android's official activity documentation specifically describes `android:exported="true"` for a main activity with `android.intent.category.LAUNCHER`. This permits other apps to launch that activity; it does not by itself establish access to protected operations. See [Android activity documentation](https://developer.android.com/guide/topics/manifest/activity-element) and [Android intents and intent filters](https://developer.android.com/guide/components/intents-filters).
 
@@ -38,6 +38,6 @@ Before broader distribution, test both a fresh app start and an already-running 
 
 No runtime code or manifest behavior was changed for this finding. The supplied v0.10 APKs therefore remain unchanged. The portal's finding status has not been edited or dismissed by the maintainer.
 
-## Suggested reviewer response
+## Technical conclusion
 
-> The referenced component is our MAIN/LAUNCHER activity. Its exported state is intentional and follows Android's documented launcher configuration. We checked both source and the submitted APK manifest. The app-defined incoming `open_grass` flag is used only for navigation, with the SKR entitlement checked before opening the scene; it does not grant Pro or modify receipts. Sensitive application receivers remain non-exported and the Accessibility service declares BIND_ACCESSIBILITY_SERVICE. We have not identified a privileged operation reachable solely by externally starting MainActivity in the reviewed path. We request contextual review of the generic missing-permission finding rather than treating expected launcher exposure as a confirmed exploit. This is maintainer triage, not a claim of a complete or independently passed security audit.
+Source and APK inspection show an intentionally exported MAIN/LAUNCHER activity. In the app-defined path examined, `open_grass` requests navigation and the SKR entitlement is checked before the scene opens. The flag does not grant Pro or modify receipts. No privileged operation reachable solely by externally starting MainActivity was identified in that reviewed path. The untested areas and limits above remain applicable. This is maintainer triage, not a complete or independently passed security audit.
