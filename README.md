@@ -6,7 +6,7 @@ Android wellbeing app for the crypto community, built with Flutter 3.41.4, Dart 
 
 ## Start here: CLOCK IN judges
 
-- [Public PDF pitch deck](https://drive.google.com/file/d/1DsKFZsLS0FYJdK8MHSDjAJ1fdWWwk9SK/view?usp=drivesdk)
+- [Public PDF pitch deck](https://mossesdct.github.io/degen-detox-deck/Degen-Detox-CLOCK-IN-Deck.pdf)
 - [Approved three-minute real-device demo](https://drive.google.com/file/d/1hRMbZsmwIDRrDhzMpnDLQufvyilikdYp/view?usp=drivesdk)
 - [Mainnet APK: real purchases](https://drive.google.com/uc?id=1_F9o0LUrRtx_xBpP-b3aqX3-eIHQCYUL&export=download)
 - [QA APK: unlocked features, no payment required](https://drive.google.com/uc?id=1L5U3hxeNwyJeD86yBX8mGMDHKvb5IoMm&export=download)

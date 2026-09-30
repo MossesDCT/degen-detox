@@ -48,7 +48,7 @@ https://drive.google.com/file/d/1hRMbZsmwIDRrDhzMpnDLQufvyilikdYp/view?usp=drive
 
 ## Deck URL
 
-https://drive.google.com/file/d/1DsKFZsLS0FYJdK8MHSDjAJ1fdWWwk9SK/view?usp=drivesdk
+https://mossesdct.github.io/degen-detox-deck/Degen-Detox-CLOCK-IN-Deck.pdf
 
 ## Repository URL
 
@@ -70,7 +70,7 @@ Two clearly labelled APKs are provided as agreed with the organizers. Mainnet re
 
 ## Submission safeguards
 
-- PDF deck publication is confirmed; anonymous browser displayed the 11-page PDF viewer without requiring sign-in. This supersedes the interactive deck link that automated coaching could not read.
+- The PDF now has a direct public GitHub Pages URL. An independent automated content reader retrieved text from all 11 pages. This replaces the Drive viewer URL for the Deck field; the hackathon Coach's next ingestion is not yet confirmed.
 - Both APK uploads match source checksums and have anyone-with-link viewer permissions. Anonymous viewers expose Download controls.
 - Grant ALIGN access to the private repository before submission.
 - Verify the separate QA installation on Seeker if possible.
